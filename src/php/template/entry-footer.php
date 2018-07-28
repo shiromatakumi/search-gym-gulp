@@ -1,31 +1,8 @@
 <footer class="entry-footer">
   <?php get_gym_region(); ?>
   
-  <div class="share-buttom">
-    <?php 
-      $url = esc_url( get_the_permalink() );
-      $title = get_the_title();
-     ?>
-    <!-- <li class="tw sns-btn__item">
-      <a href="http://twitter.com/share?url=<?php echo $url; ?>&text=<?php echo $title;?>" target="_blank" rel="nofollow">
-          <i class="fa fa-twitter"></i>
-          <span class="share_txt">ツイート</span>
-      </a>
-    </li>
-    facebook
-    <li class="fb sns-btn__item">
-        <a href="http://www.facebook.com/share.php?u=<?php echo $url; ?>&t=<?php echo $title; ?>" target="_blank" rel="nofollow">
-            <i class="fa fa-facebook"></i>
-            <span class="share_txt">シェア</span>
-        </a>
-    </li>
-    はてなブックマーク
-    <li class="hatebu sns-btn__item">
-      <a href="http://b.hatena.ne.jp/entry/<?php echo $url; ?>" target="_blank" rel="nofollow">
-            <span class="batebu-icon">B!</span>
-            <span class="share_txt">はてブ</span>
-        </a>
-    </li> -->
+  <div class="share-area share-area__buttom">
+    <?php get_template_part( 'template/share-buttons' ); ?>
   </div>
   <?php 
     $post_id = get_the_ID();

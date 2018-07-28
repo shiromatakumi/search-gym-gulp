@@ -682,6 +682,71 @@ table {
 .gym-region__item a {
   color: #666;
 }
+/* シェアボタン */
+.share-area {
+  background-color: #f9f9f9;
+  padding: 20px 16px;
+}
+.share-area__buttom {
+  margin: 0 0 40px;
+}
+.share-buttons__text {
+  text-align: center;
+  font-size: .8rem;
+  color: #666;
+}
+.share-btn__list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.share-btn__item {
+  display: inline-block;
+  width: 32%;
+  a {
+    display: block;
+    color: #fff;
+    background-color: #666;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 4px;
+    text-decoration: none;
+    text-align: center;
+    &:hover {
+      opacity: .8;
+    }
+  }
+}
+.share-btn__item--tw {
+  a {
+    background-color: #32A8F4;
+  }
+}
+.share-btn__item--fb {
+  a {
+    background-color: #3B539A;
+  }
+}
+.share-btn__item--hatebu {
+  a {
+    background-color: #00A3E2;
+  }
+}
+@media (max-width: 600px) {
+  .share-btn__item {
+    font-size: .8rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .share-btn__item {
+    width: 100%;
+    margin-bottom: 6px;
+    font-size: 1rem;
+  }
+}
 /* クチコミ */
 .comment-form {
   display: -webkit-flex;
