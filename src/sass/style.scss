@@ -174,6 +174,24 @@ table {
   border-left: 8px solid rgba(255,255,255,.4);
 }
 /**
+ * 路線別ジム検索
+ */
+.search-line {
+
+}
+.search-line__list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+}
+.search-line__item {
+  margin: 0 10px 8px 0;
+  &--none {
+    color: #ccc;
+  }
+}
+/**
  * 検索ボックス
  */
 .search-form input {
@@ -195,8 +213,10 @@ table {
   color: #fff;
   background-color: #d05858;
   background-image: linear-gradient(0deg, #9f1616, #bd2929);
+  box-shadow: 2px 2px 2px rgba(0,0,0,.1);
   font-size: 1rem;
   border-radius: 6px;
+  border: none;
   cursor: pointer;
 }
 /**

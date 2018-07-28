@@ -16,6 +16,12 @@ function getBaseGymData($atts) {
 }
 add_shortcode('base', 'getBaseGymData');
 
+// test
+function getStationByLine() {
+  get_template_part( 'lines' );
+}
+add_shortcode('test', 'getStationByLine');
+
 function getGymByRegion($atts) {
   $content = '';
   $key = $atts["region"];

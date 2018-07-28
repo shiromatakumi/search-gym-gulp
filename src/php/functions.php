@@ -242,6 +242,10 @@ function get_recommend_gym($num) {
 
 function get_gym_region() {
 
+  if( get_post_type() !== 'gym' ) {
+    return;
+  }
+
   /**
    * the_post()でグローバル変数$postが上書きされてしまうので、
    * 一旦変数に格納して代入し直す
