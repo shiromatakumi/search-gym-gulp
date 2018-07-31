@@ -5,3 +5,5 @@ package-lock.json
 wp/
 
 .DS_Store
+gulpfile.js
+package.json
