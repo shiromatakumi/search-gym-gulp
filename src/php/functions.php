@@ -5,6 +5,8 @@ require_once( 'lib/functions-edit.php' );
 
 add_theme_support( 'post-thumbnails' );
 
+add_image_size( 'sidebar-thumb', 380, 240, true );
+add_image_size( 'sidebar-thumb-2x', 760, 480, true );
 
 /**
  * メニューの設定
@@ -84,6 +86,20 @@ function create_post_type() {
         'post-formats',
         'comments'
       ), //編集画面で使用するフィールド
+    )
+  );
+  //タグタイプの設定（カスタムタクソノミーの設定）
+  register_taxonomy(
+    'gym_tag', //タグ名（任意）
+    'gym', //カスタム投稿名
+    array(
+      'hierarchical' => false, //タグタイプの指定（階層をもたない）
+      'update_count_callback' => '_update_post_term_count',
+      //ダッシュボードに表示させる名前
+      'label' => 'タグ', 
+      'public' => true,
+      'show_ui' => true,
+      'query_var' => true,
     )
   );
 }
@@ -200,7 +216,7 @@ function get_average_star() {
  * 口コミ情報を表示するここまで
  ======================================================*/
 
-function get_recommend_gym($num) {
+function get_recommend_gym($num, $position = 'sidebar') {
   /**
    * the_post()でグローバル変数$postが上書きされてしまうので、
    * 一旦変数に格納して代入し直す
@@ -224,12 +240,13 @@ function get_recommend_gym($num) {
     while ( $my_query->have_posts() ) {
       $my_query->the_post();
       $post_id = $my_query->posts[$count]->ID;
-      $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'large' );
+      $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'sidebar-thumb' );
+      $post_thumbnail_url_2x = get_the_post_thumbnail_url( $post_id, 'sidebar-thumb-2x' );
       $link = get_the_permalink();
       $title = $my_query->posts[$count]->post_title;
-      $content .= '<div class="recommend-gym">';
+      $content .= '<div class="recommend-gym recommend-gym--' . $position . '">';
       $content .= '<h3 class="recommend-gym__title"><a href="' . $link . '">' .  $title . '</a></h3>';
-      $content .= '<div class="recommend-gym__thumb"><a href="' . $link . '"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></a></div>';
+      $content .= '<div class="recommend-gym__thumb"><a href="' . $link . '"><img src="' . $post_thumbnail_url . '" srcset="' . $post_thumbnail_url . ' 1x, ' . $post_thumbnail_url_2x . ' 2x" alt="' . $title . '"></a></div>';
       $content .= '<p class="recommend-gym__detail"><a href="' . $link . '">このジムの詳細を見る</a></p>';
       $content .= '</div>';
       $count++;
@@ -321,3 +338,16 @@ function theme_customizer_extension($wp_customize) {
     ));
 }
 add_action('customize_register', 'theme_customizer_extension');
+
+/**
+ * feedの設定
+ */
+remove_action('do_feed_rdf', 'do_feed_rdf');
+remove_action('do_feed_rss', 'do_feed_rss');
+remove_action('do_feed_rss2', 'do_feed_rss2');
+remove_action('do_feed_atom', 'do_feed_atom');
+
+// サイト全体の記事更新フィード、サイト全体のコメントフィードリンクの削除
+remove_action('wp_head', 'feed_links', 2);
+// 記事のコメント、記事アーカイブ、カテゴリなどのフィードリンクの削除
+remove_action('wp_head', 'feed_links_extra', 3);

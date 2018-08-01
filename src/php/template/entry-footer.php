@@ -13,8 +13,8 @@
     <?php endif; ?>
   <div class="widget widget--recommend widget--sidebar">
     <h3 class="widget__title widget__title--sidebar">おすすめジム</h3>
-    <div class="recommend-gym-list">
-      <?php echo get_recommend_gym(6); ?>
+    <div class="recommend-gym-list recommend-gym-list--footer">
+      <?php echo get_recommend_gym(6, 'footer'); ?>
     </div>
   </div>
 </footer>

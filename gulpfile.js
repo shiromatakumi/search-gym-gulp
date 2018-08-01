@@ -48,7 +48,7 @@ gulp.task( 'copy', function() {
 /** ブラウザ表示 */
 gulp.task("browserSync", function() {
   browserSync.init({
-      proxy: 'http://localhost/search-gym-gulp/wp/',
+      proxy: 'http://localhost/search-gym2/search-gym-gulp/wp/',
       port: 3000
     });
   // ファイルの監視 : 以下のファイルが変わったらリロード処理を呼び出す

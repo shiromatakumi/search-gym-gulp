@@ -17,12 +17,12 @@ header, footer, nav, section, article, aside {
   display:block;
 }
 a {
-  color: #4946d0;
+  color: #4240a9;
   -webkit-transition: all .3s;
   transition: all .3s;
 }
 a:visited {
-  color: #4946d0;
+  color: #4240a9;
 }
 a:hover {
   color: #333;
@@ -130,6 +130,8 @@ table {
   border-bottom: 2px solid #bd2929;
   font-size: 1.2rem;
 }
+
+
 .recommend-gym {
   padding: 10px;
   border: 1px solid #ddd;
@@ -173,17 +175,34 @@ table {
   border: 6px solid transparent;
   border-left: 8px solid rgba(255,255,255,.4);
 }
+
+.recommend-gym-list--footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.recommend-gym--footer {
+  width: 49%;
+  .recommend-gym__detail a {
+    font-size: .8rem;
+  }
+}
+
 /**
  * 路線別ジム検索
  */
 .search-line {
-
+  padding-top: 70px;
+  .search-line__title {
+    margin-top: 0;
+  }
 }
 .search-line__list {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
   padding: 0;
+  margin: 0;
 }
 .search-line__item {
   margin: 0 10px 8px 0;
@@ -392,7 +411,6 @@ table {
   height: 32px;
   line-height: 30px;
   margin-right: 4px;
-  border: 1px solid #eee;
 }
 .page-numbers li a {
   text-decoration: none;
@@ -554,7 +572,7 @@ table {
 }
 .entry-content .gym-content__link {
     position: relative;
-    margin: 2em 0;
+    margin: 1.6em 0 1em;
     padding: 0.5em 1em;
     border: solid 3px #bbb;
 }
@@ -666,6 +684,35 @@ table {
   margin-top: -6px;
   border: 6px solid transparent;
   border-left: 8px solid rgba(255,255,255,.4);
+}
+/* 対応しているサービス */
+.service__list {
+  padding: 0;
+  margin-bottom: 2em;
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+}
+.service__item {
+  background-color: #fbf0d8;
+  color: #50360d;
+  display: inline-block;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 12px;
+  margin: 0 6px 6px 0;
+}
+.service__item--osusume {
+  color: #fff;
+  background-color: #c02b21;
+}
+.service__item--woman {
+  color: #75223d;
+  background-color: #fbd8e3;
+}
+.service__item--woman-osusume {
+  color: #75223d;
+  background-color: #ffeff4;
 }
 /* 店舗一覧 */
 .gym-region {
