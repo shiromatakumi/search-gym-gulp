@@ -4,6 +4,7 @@ require_once( 'lib/functions-widget.php' );
 require_once( 'lib/functions-edit.php' );
 
 add_theme_support( 'post-thumbnails' );
+add_theme_support( 'excerpt' );
 
 add_image_size( 'sidebar-thumb', 380, 240, true );
 add_image_size( 'sidebar-thumb-2x', 760, 480, true );
@@ -217,13 +218,7 @@ function get_average_star() {
  ======================================================*/
 
 function get_recommend_gym($num, $position = 'sidebar') {
-  /**
-   * the_post()でグローバル変数$postが上書きされてしまうので、
-   * 一旦変数に格納して代入し直す
-   */
-  global $post;
-  $temp_post = $post;
-
+  
   $content = '';
   $count = 0;
   $args = array(
@@ -253,7 +248,7 @@ function get_recommend_gym($num, $position = 'sidebar') {
     }
   }
   // 上書きされた$postを元に戻す
-  $post = $temp_post;
+  wp_reset_postdata();
   return $content;
 }
 
@@ -262,13 +257,6 @@ function get_gym_region() {
   if( get_post_type() !== 'gym' ) {
     return;
   }
-
-  /**
-   * the_post()でグローバル変数$postが上書きされてしまうので、
-   * 一旦変数に格納して代入し直す
-   */
-  global $post;
-  $temp_post = $post;
 
   $slug_name = get_post_field( 'post_name', get_the_ID() ); // base-○○
   $args = array(
@@ -297,7 +285,7 @@ function get_gym_region() {
     $content .= '</ul></div>';
   }
   // 上書きされた$postを元に戻す
-  $post = $temp_post;
+  wp_reset_postdata();
   echo $content;
 }
 

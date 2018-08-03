@@ -662,28 +662,28 @@ table {
 .entry-content .gym-content__detail a {
   display: inline-block;
   background-color: #d05858;
-  background-image: linear-gradient(0deg, #9f1616, #bd2929);
-  padding: 12px 34px 12px 20px;
+  background-image: linear-gradient(0deg,#dc7979,#e2a3a3);
+  padding: 7px 34px 6px 20px;
   color: #fff;
   border-radius: 6px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   text-decoration: none;
   position: relative;
-  min-width: 260px;
+  min-width: 150px;
   box-shadow: 2px 2px 2px rgba(0,0,0,.2);
 }
 .entry-content .gym-content__detail a:hover {
   background-color: #ab3f3f;
-  background-image: linear-gradient(0deg, #7b1111, #bd2f2f);
+  background-image: linear-gradient(0deg, #bf5757, #d69393);
 }
 .gym-content__detail a:after {
   content: "";
   position: absolute;
   right: 8px;
   top: 50%;
-  margin-top: -6px;
-  border: 6px solid transparent;
-  border-left: 8px solid rgba(255,255,255,.4);
+  margin-top: -3px;
+  border: 4px solid transparent;
+  border-left: 6px solid rgba(255,255,255,.4);
 }
 /* 対応しているサービス */
 .service__list {
@@ -713,6 +713,23 @@ table {
 .service__item--woman-osusume {
   color: #75223d;
   background-color: #ffeff4;
+}
+.gmap-wrap {
+  position: relative;
+  padding-bottom: 56.25%;
+  padding-top: 30px;
+  height: 0;
+  overflow: hidden;
+}
+ 
+.gmap-wrap iframe,
+.gmap-wrap object,
+.gmap-wrap embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 /* 店舗一覧 */
 .gym-region {
@@ -797,6 +814,23 @@ table {
       line-height: 40px;
     }
   }
+}
+/* サイトマップ */
+.sitemap__list {
+  font-size: 1rem;
+}
+.sitemap__item {
+  margin-bottom: 6px;
+}
+.sitemap__item--gym {
+  font-weight: bold;
+}
+.sitemap__list-child {
+  font-size: .9rem;
+  margin-top: 6px;
+}
+.sitemap__item-child {
+  font-weight: normal;
 }
 /* クチコミ */
 .comment-form {

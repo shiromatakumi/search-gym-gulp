@@ -47,13 +47,6 @@ function getGymByRegion($atts) {
   $my_query = new WP_Query($args);
   $count = 0;
 
-  /**
-   * the_post()でグローバル変数$postが上書きされてしまうので、
-   * 一旦変数に格納して代入し直す
-   */
-  global $post;
-  $temp_post = $post;
-
   if ( $my_query->have_posts() ) {
     while ( $my_query->have_posts() ) {
       $my_query->the_post();
@@ -72,13 +65,14 @@ function getGymByRegion($atts) {
       $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
       $content .= $content_text;
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
+      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
       $content .= '</div>';
       $count++;
     }
   }
 
   // 上書きされた$postを元に戻す
-  $post = $temp_post;
+  wp_reset_postdata();
   return do_shortcode( $content );
 }
 add_shortcode('region', 'getGymByRegion');
@@ -120,13 +114,7 @@ function getGymByPrefecture($atts) {
   );
   $my_query = new WP_Query($args);
   $count = 0;
-  /**
-   * the_post()でグローバル変数$postが上書きされてしまうので、
-   * 一旦変数に格納して代入し直す
-   */
-  global $post;
-  $temp_post = $post;
-
+  
   if ( $my_query->have_posts() ) {
     while ( $my_query->have_posts() ) {
       $my_query->the_post();
@@ -147,7 +135,7 @@ function getGymByPrefecture($atts) {
     }
   }
   // 上書きされた$postを元に戻す
-  $post = $temp_post;
+  wp_reset_postdata();
   return do_shortcode( $content );
 
 }
@@ -204,12 +192,6 @@ function getGymForWoman($atts) {
   );
   $my_query = new WP_Query($args);
   $count = 0;
-  /**
-   * the_post()でグローバル変数$postが上書きされてしまうので、
-   * 一旦変数に格納して代入し直す
-   */
-  global $post;
-  $temp_post = $post;
 
   if ( $my_query->have_posts() ) {
     while ( $my_query->have_posts() ) {
@@ -231,7 +213,7 @@ function getGymForWoman($atts) {
     }
   }
   // 上書きされた$postを元に戻す
-  $post = $temp_post;
+  wp_reset_postdata();
   return do_shortcode( $content );
 
 }
@@ -240,14 +222,12 @@ add_shortcode('woman', 'getGymForWoman');
 //　Google Mapの埋め込み用
 function embedGoogleMap($atts, $content='') {
 
-  if( $content !== '' ) {
-    $embed_position = '<div class="js-studio-map"></div>';
-    $content = str_replace(array("\r\n", "\r", "\n"), '', $content);
-    $content = rtrim($content, "<br />");
-    $content = rtrim($content, "<br>");
-    $map_js = "<script> var iframeGoogleMap = '" . $content . "'; </script>";
+  global $entry_post_type;
 
-    return $embed_position . $map_js;
+  if( $content !== '' &&  $entry_post_type === "studio" ) {
+    return '<h4 class="gmap-title">Map</h4><div class="gmap-wrap">' . $content . '</div>';
+  } else {
+    return '';
   }
 }
 add_shortcode('map', 'embedGoogleMap');
@@ -304,4 +284,4 @@ function gym_service_list() {
     return $content;
   }
 }
-add_shortcode('service', 'gym_service_list');
+add_shortcode( 'service', 'gym_service_list' );
