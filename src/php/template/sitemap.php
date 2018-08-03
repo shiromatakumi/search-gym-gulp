@@ -26,7 +26,7 @@ $args = array(
     'post_type'        => 'gym',
     'posts_per_page'   => -1,
     'orderby'          => 'post_date',
-    'order'            => 'DESC'
+    'order'            => 'ASC'
   );
   $my_query = new WP_Query($args);
   $count = 0;

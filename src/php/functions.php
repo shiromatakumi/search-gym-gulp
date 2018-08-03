@@ -89,6 +89,23 @@ function create_post_type() {
       ), //編集画面で使用するフィールド
     )
   );
+  register_post_type( "line", // 投稿タイプ名の定義
+    array(
+      "labels" => array(
+          "name" => __( "路線" ), // 表示する投稿タイプ名
+          "singular_name" => __( "路線" )
+        ),
+      "public" => true,
+      "menu_position" =>8,
+      'supports' => array(
+        'title',
+        'editor',
+        'excerpt',
+        'custom-fields',
+        'post-formats'
+      ), //編集画面で使用するフィールド
+    )
+  );
   //タグタイプの設定（カスタムタクソノミーの設定）
   register_taxonomy(
     'gym_tag', //タグ名（任意）
@@ -339,3 +356,31 @@ remove_action('do_feed_atom', 'do_feed_atom');
 remove_action('wp_head', 'feed_links', 2);
 // 記事のコメント、記事アーカイブ、カテゴリなどのフィードリンクの削除
 remove_action('wp_head', 'feed_links_extra', 3);
+
+//親ページ判別
+function is_child( $slug = "" ) {
+  if( is_singular() )://投稿ページのとき（固定ページ含）
+    global $post;
+    if ( $post->post_parent ) {//現在のページに親がいる場合
+      $post_data = get_post($post->post_parent);//親ページの取得
+      if($slug != "") {//$slugが空じゃないとき
+        if(is_array($slug)) {//$slugが配列のとき
+          for($i = 0 ; $i <= count($slug); $i++) {
+            if($slug[$i] == $post_data->post_name || $slug[$i] == $post_data->ID || $slug[$i] == $post_data->post_title) {//$slugの中のどれかが親ページのスラッグ、ID、投稿タイトルと同じのとき
+              return true;
+            }
+          }
+        } elseif($slug == $post_data->post_name || $slug == $post_data->ID || $slug == $post_data->post_title) {//$slugが配列ではなく、$slugが親ページのスラッグ、ID、投稿タイトルと同じのとき
+          return true;
+        } else {
+          return false;
+        }
+      } else {//親ページは存在するけど$slugが空のとき
+        return true;
+      }
+    }else {//親ページがいない
+      return false;
+    }
+  endif;
+}
+

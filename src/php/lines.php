@@ -73,12 +73,30 @@ $lines_array = array(
 	'東京メトロ千代田線' => $metro_chiyoda,
 );
 
-/**
- * the_post()でグローバル変数$postが上書きされてしまうので、
- * 一旦変数に格納して代入し直す
- */
-global $post;
-$temp_post = $post;
+/* ここの続きは後で
+$lines_array = array(
+	'jr_co' => array(
+		'JR山手線' => $jr_yamanote,
+		'JR中央線' => $jr_chuou,
+		'JR総武線' => $jr_soubu,
+		'JR常磐線' => $jr_joban,
+		'JR埼京線' => $jr_saikyo,
+		'JR京浜東北線' => $jr_keihintouhoku,
+	),
+	'metoro_co' => array(
+		'東京メトロ銀座線' => $metro_ginza,
+		'東京メトロ丸ノ内線' => $metro_marunouti,
+		'東京メトロ日比谷線' => $metro_hibiya,
+		'東京メトロ東西線' => $metro_tozai,
+		'東京メトロ千代田線' => $metro_chiyoda,
+	)
+);
+
+$railway_co = array(
+	'jr_co'				=> 'JR',
+	'metoro_co'		=> '東京メトロ',
+);
+*/
 
 $content = '';
 
@@ -110,7 +128,6 @@ foreach( $lines_array as $line => $stations ) {
 
 	      $content .= '<li class="search-line__item"><a href="' . $link . '">' . $station . '</a></li>';
 
-	      
 	      $count++;
 	    }
 	    
@@ -121,7 +138,7 @@ foreach( $lines_array as $line => $stations ) {
 	$content .= '</ul></div>';
 }
 // 上書きされた$postを元に戻す
-$post = $temp_post;
+wp_reset_postdata();
 echo $content;
 
  ?>
