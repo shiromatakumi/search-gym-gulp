@@ -73,73 +73,14 @@ $lines_array = array(
 	'東京メトロ千代田線' => $metro_chiyoda,
 );
 
-/* ここの続きは後で
-$lines_array = array(
-	'jr_co' => array(
-		'JR山手線' => $jr_yamanote,
-		'JR中央線' => $jr_chuou,
-		'JR総武線' => $jr_soubu,
-		'JR常磐線' => $jr_joban,
-		'JR埼京線' => $jr_saikyo,
-		'JR京浜東北線' => $jr_keihintouhoku,
+$railway_co = array(
+	'JR' => array(
+		'JR山手線', 'JR中央線', 'JR総武線', 'JR総武線', 'JR埼京線'
 	),
-	'metoro_co' => array(
-		'東京メトロ銀座線' => $metro_ginza,
-		'東京メトロ丸ノ内線' => $metro_marunouti,
-		'東京メトロ日比谷線' => $metro_hibiya,
-		'東京メトロ東西線' => $metro_tozai,
-		'東京メトロ千代田線' => $metro_chiyoda,
+	'東京メトロ' => array(
+		'東京メトロ銀座線', '東京メトロ丸ノ内線', '東京メトロ日比谷線', '東京メトロ東西線',
+		'東京メトロ千代田線'
 	)
 );
 
-$railway_co = array(
-	'jr_co'				=> 'JR',
-	'metoro_co'		=> '東京メトロ',
-);
-*/
-
-$content = '';
-
-foreach( $lines_array as $line => $stations ) {
-
-	if( empty($line) || empty($stations) ) return;
-
-	$content .= '<div class="search-line" id="' . $line . '"><h3 class="search-line__title">' . $line . '</h3>';
-	$content .= '<ul class="search-line__list">';
-
-	foreach( $stations as $station ) {
-
-	  $count = 0;
-	  $args = array(
-	    'post_type'        => 'post',
-	    'posts_per_page'   => 1,
-	    'meta_key' => 'area',
-	    'meta_value' => $station,
-	  );
-	  $my_query = new WP_Query($args);
-
-	  if ( $my_query->have_posts() ) {
-	  	
-	    while ( $my_query->have_posts() ) {
-	      $my_query->the_post();
-	      $post_id = $my_query->posts[$count]->ID;
-
-	      $link = get_the_permalink();
-
-	      $content .= '<li class="search-line__item"><a href="' . $link . '">' . $station . '</a></li>';
-
-	      $count++;
-	    }
-	    
-	  } else {
-	  	// $content .= '<li class="search-line__item search-line__item--none">' . $station . '</li>';
-	  }
-	}
-	$content .= '</ul></div>';
-}
-// 上書きされた$postを元に戻す
-wp_reset_postdata();
-echo $content;
-
- ?>
 

@@ -19,9 +19,167 @@ add_shortcode('base', 'getBaseGymData');
 
 // test
 function getStationByLine() {
-  get_template_part( 'lines' );
+  
+  //
+  include locate_template( 'lines.php' );
+
+  $content = '';
+
+  foreach( $lines_array as $line => $stations ) {
+
+    if( empty($line) || empty($stations) ) return;
+
+    $content .= '<div class="search-line" id="' . $line . '"><h3 class="search-line__title">' . $line . '</h3>';
+    $content .= '<ul class="search-line__list">';
+
+    foreach( $stations as $station ) {
+
+      $count = 0;
+      $args = array(
+        'post_type'        => 'post',
+        'posts_per_page'   => 1,
+        'meta_key' => 'area',
+        'meta_value' => $station,
+      );
+      $my_query = new WP_Query($args);
+
+      if ( $my_query->have_posts() ) {
+        
+        while ( $my_query->have_posts() ) {
+          $my_query->the_post();
+          $post_id = $my_query->posts[$count]->ID;
+
+          $link = get_the_permalink();
+
+          $content .= '<li class="search-line__item"><a href="' . $link . '">' . $station . '</a></li>';
+
+          $count++;
+        }
+        
+      } else {
+        // $content .= '<li class="search-line__item search-line__item--none">' . $station . '</li>';
+      }
+    }
+    $content .= '</ul></div>';
+  }
+  // 上書きされた$postを元に戻す
+  wp_reset_postdata();
+  return $content;
 }
 add_shortcode('test', 'getStationByLine');
+
+
+/**
+ * 鉄道会社から駅を取得するショートコード
+ */
+function get_station_by_railway_co($atts) {
+  
+  //
+  include locate_template( 'lines.php' );
+
+  $content = '';
+
+  $co_name = $atts['co'];
+  $co_lines = $railway_co[$co_name];
+
+  foreach( $co_lines as $line  ) {
+
+    if( empty( $line ) ) return;
+
+    $content .= '<div class="search-line" id="' . $line . '"><h3 class="search-line__title">' . $line . '</h3>';
+      $content .= '<ul class="search-line__list">';
+
+    $stations_array = $lines_array[$line];
+    /*
+     $co_linesは駅名が入った配列
+     $lineは駅名
+     $stations_arrayは駅の配列
+     */
+    foreach( $stations_array as $station) {
+      if( empty( $station ) ) return;
+      $count = 0;
+      $args = array(
+        'post_type'        => 'post',
+        'posts_per_page'   => 1,
+        'meta_key' => 'area',
+        'meta_value' => $station,
+      );
+      $my_query = new WP_Query($args);
+
+      if ( $my_query->have_posts() ) {
+        
+        while ( $my_query->have_posts() ) {
+          $my_query->the_post();
+          $post_id = $my_query->posts[$count]->ID;
+
+          $link = get_the_permalink();
+
+          $content .= '<li class="search-line__item"><a href="' . $link . '">' . $station . '</a></li>';
+
+          $count++;
+        } 
+      }
+    }
+    $content .= '</ul></div>';
+  }
+  // 上書きされた$postを元に戻す
+  wp_reset_postdata();
+
+  return $content;
+}
+add_shortcode('railway', 'get_station_by_railway_co');
+
+/**
+ * 路線から店舗を取得するショートコード
+ */
+function get_studio_lines($atts){
+  include locate_template( 'lines.php' );
+
+  $content = '';
+  $meta_query = array();
+  $line = $atts['line'];
+  $stations_array = $lines_array[$line];
+
+  if( empty( $line ) || empty( $stations_array ) ) return;
+
+  foreach( $stations_array as $station ) {
+    $meta_query[] = array(
+      'key' => 'region',
+      'value' => $station,
+      'compare' => '='
+    );
+  }
+  $meta_query['relation'] = 'OR';
+
+  $args = array(
+    'post_type'        => 'studio',
+    'posts_per_page'   => -1,
+    'orderby'          => 'meta_value_num',
+    'order'            => 'ASC',
+    'meta_key' => 'price_per',
+    'meta_query' => $meta_query
+  );
+
+
+  $my_query = new WP_Query($args);
+  $count = 0;
+
+  // var_dump($my_query);
+  if ( $my_query->have_posts() ) {
+    while ( $my_query->have_posts() ) {
+      $my_query->the_post();
+
+      $title = $my_query->posts[$count]->post_title;
+      // ベースとなるジムのアフィコードを取得
+      $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
+      $count++;
+    }
+  }
+
+  return $content;
+}
+add_shortcode('studio_by_line', 'get_studio_lines');
+
 
 /**
  * 地名からジムを取得して表示させるショートコード
