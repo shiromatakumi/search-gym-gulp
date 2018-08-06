@@ -1,4 +1,5 @@
 <?php
+
 require_once( 'lib/functions-shortcode.php' );
 require_once( 'lib/functions-widget.php' );
 require_once( 'lib/functions-edit.php' );
