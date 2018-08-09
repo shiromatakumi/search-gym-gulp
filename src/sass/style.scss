@@ -531,6 +531,9 @@ table {
     color: #787878;
     font-size: .9em;
 }
+.entry-content .hit-count {
+  color: #666;
+}
 /* entry-bottom */
 .near-studio {
   display: flex;
@@ -1060,5 +1063,11 @@ table {
   }
   .recommend-gym {
     width: 100%;
+  }
+  .service__item {
+    font-size: .9rem;
+    padding: 0 8px;
+    height: auto;
+    line-height: 1.6rem;
   }
 }

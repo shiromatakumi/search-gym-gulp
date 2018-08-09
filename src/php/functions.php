@@ -107,6 +107,23 @@ function create_post_type() {
       ), //編集画面で使用するフィールド
     )
   );
+  register_post_type( "template", // 投稿タイプ名の定義
+    array(
+      "labels" => array(
+          "name" => __( "テンプレート用" ), // 表示する投稿タイプ名
+          "singular_name" => __( "テンプレート用" )
+        ),
+      "public" => true,
+      "menu_position" =>8,
+      'supports' => array(
+        'title',
+        'editor',
+        'excerpt',
+        'custom-fields',
+        'post-formats'
+      ), //編集画面で使用するフィールド
+    )
+  );
   //タグタイプの設定（カスタムタクソノミーの設定）
   register_taxonomy(
     'gym_tag', //タグ名（任意）

@@ -3,7 +3,10 @@
 /**
  * ショートコード
  */
-// ジム情報を出力するショートコード
+
+/**
+ * ジム情報を出力するショートコード
+ */
 function getBaseGymData($atts) {
   $gym_slug = $atts['slug'];
 
@@ -17,10 +20,24 @@ function getBaseGymData($atts) {
 }
 add_shortcode('base', 'getBaseGymData');
 
+/**
+ * テンプレート文章を引っ張てくるショートコード
+ */
+function get_text_from_template($atts) {
+  $gym_slug = $atts['slug'];
+
+  if( isset( $gym_slug ) ) {
+    $post_id = get_page_by_path($gym_slug, "OBJECT", "template");
+    $post_id = $post_id->ID;
+    $content = get_post_field( 'post_content', $post_id );
+    $content = do_shortcode($content);
+    return apply_filters( 'the_content', $content );
+  }
+}
+add_shortcode('temp', 'get_text_from_template');
 // test
 function getStationByLine() {
   
-  //
   include locate_template( 'lines.php' );
 
   $content = '';
@@ -204,6 +221,7 @@ function getGymByRegion($atts) {
   );
   $my_query = new WP_Query($args);
   $count = 0;
+  $hit_count = 0;
 
   if ( $my_query->have_posts() ) {
     while ( $my_query->have_posts() ) {
@@ -226,7 +244,10 @@ function getGymByRegion($atts) {
       $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
       $content .= '</div>';
       $count++;
+      $hit_count++;
     }
+    $hit_count_text = '<p class="hit-count">' . $hit_count .'件のジムがヒットしました。</p>';
+    $content = $hit_count_text . $content;
   }
 
   // 上書きされた$postを元に戻す
@@ -377,7 +398,149 @@ function getGymForWoman($atts) {
 }
 add_shortcode('woman', 'getGymForWoman');
 
-//　Google Mapの埋め込み用
+/**
+ * 特徴と地域からジムを取得するショートコード
+ */
+function get_gym_by_feature($atts) {
+  $content = '';
+
+  $feature = $atts["feature"];
+  $prefecture = $atts["prefecture"];
+
+  if( !isset($feature) && !isset($prefecture) ) return;
+
+  $tag = get_term_by('name', '重複', 'gym_tag');
+  $tag_id = $tag->term_id;
+
+  $meta_query_args = array(
+    array(
+      'key' => 'prefecture',
+      'value' => $prefecture,
+      'compare'=>'=',
+    ),
+    array(
+      'key' => $feature,
+      'value' => '1',
+      'compare'=>'='
+    ),
+    'relation' => 'AND'
+  );
+
+  $args = array(
+    'post_type'        => 'gym',
+    'posts_per_page'   => -1,
+    'orderby'          => 'meta_value_num',
+    'order'            => 'ASC',
+    'tax_query' => array(
+      // 重複タグがある場合、除外する
+      array(
+        'taxonomy'  => 'gym_tag',
+        'field'     => 'term_id',
+        'terms'     => $tag_id,
+        'operator'  => 'NOT IN'
+      )
+    ),
+    'meta_key' => 'price_per',
+    'meta_query' => $meta_query_args
+  );
+  $my_query = new WP_Query($args);
+  $count = 0;
+
+  if ( $my_query->have_posts() ) {
+    while ( $my_query->have_posts() ) {
+      $my_query->the_post();
+      $post_id = $my_query->posts[$count]->ID;
+      $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
+      $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
+      $title = $my_query->posts[$count]->post_title;
+      // ベースとなるジムのアフィコードを取得
+      $aficode = get_post_meta($post_id, 'aficode', true);
+      
+      $content .= '<div class="gym-content">';
+      $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
+      $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
+      $content .= $content_text;
+      if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
+      $content .= '</div>';
+      $count++;
+    }
+  }
+  // 上書きされた$postを元に戻す
+  wp_reset_postdata();
+  return do_shortcode( $content );
+}
+add_shortcode('feature', 'get_gym_by_feature');
+
+/**
+ *
+ */
+function get_gym_by_feature2($atts) {
+  $content = '';
+
+  $feature = $atts["feature"];
+  $region = $atts["region"];
+
+  if( !isset($feature) && !isset($region) ) return;
+
+  $args = array(
+    'post_type'        => 'studio',
+    'posts_per_page'   => -1,
+    'orderby'          => 'meta_value_num',
+    'order'            => 'ASC',
+    'meta_key' => 'price_per',
+    'meta_query' => array(
+      array(
+        'key' => 'region',
+        'value' => $region,
+        'compare'=>'=',
+      )
+    )
+  );
+  // いったんエリアのジムを全部取得する
+  $my_query = new WP_Query($args);
+  $count = 0;
+
+  if ( $my_query->have_posts() ) {
+    while ( $my_query->have_posts() ) {
+      $my_query->the_post();
+      $post_id = $my_query->posts[$count]->ID;
+
+      // 店舗からジムのIDを取得する
+      $meta_values = get_post_meta($post_id, 'base_gym', true);
+      $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
+      $post_base_id = $post_base_obj->ID;
+
+      $feature_value = get_post_meta($post_base_id, $feature, true);
+
+      if( $feature_value !== '1') {
+        $count++;
+        continue; //特徴が該当しなければ表示しない
+      }
+      $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
+      $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
+      $title = $my_query->posts[$count]->post_title;
+
+      // ベースとなるジムのアフィコードを取得
+      $aficode = get_post_meta($post_base_id, 'aficode', true);
+      
+      $content .= '<div class="gym-content">';
+      $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
+      $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
+      $content .= $content_text;
+      if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
+      $content .= '</div>';
+      $count++;
+    }
+  }
+  // 上書きされた$postを元に戻す
+  wp_reset_postdata();
+  return do_shortcode( $content );
+}
+add_shortcode('feature2', 'get_gym_by_feature2');
+
+/**
+ *  Google Mapの埋め込み用
+ */
 function embedGoogleMap($atts, $content='') {
 
   global $entry_post_type;
