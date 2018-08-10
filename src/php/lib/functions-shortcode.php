@@ -529,7 +529,7 @@ function get_gym_by_feature2($atts) {
       $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
       $content .= $content_text;
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
-      // $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
+      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
       $content .= '</div>';
       $count++;
     }
