@@ -472,7 +472,7 @@ function get_gym_by_feature($atts) {
 add_shortcode('feature', 'get_gym_by_feature');
 
 /**
- *
+ * エリアと特徴からジムを検索するショートコード
  */
 function get_gym_by_feature2($atts) {
   $content = '';

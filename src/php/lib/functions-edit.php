@@ -30,6 +30,9 @@ if(!function_exists( 'gym_add_quick_tag' )) {
         QTags.addButton('qt-posttype-gym','ジム情報のみ表示', '[posttype type="gym"]\n\n[/posttype]');
         QTags.addButton('qt-posttype-studio','店舗情報のみ表示', '[posttype type="studio"]\n\n[/posttype]');
         QTags.addButton('qt-posttype-post','投稿ページのみ表示', '[posttype type="post"]\n\n[/posttype]');
+        QTags.addButton('qt-feature-prefecture','都道府県と特徴', '[feature feature="" prefecture=""]');
+        QTags.addButton('qt-region-prefecture','エリアと特徴', '[feature2 feature="" region=""]');
+        QTags.addButton('qt-get-temp','テンプレート呼び出し', '[temp slug=""]');
       </script>
     <?php }
   }
