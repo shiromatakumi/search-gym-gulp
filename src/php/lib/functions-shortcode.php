@@ -28,6 +28,7 @@ function get_text_from_template($atts) {
 
   if( isset( $gym_slug ) ) {
     $post_id = get_page_by_path($gym_slug, "OBJECT", "template");
+    if( !$post_id ) return;
     $post_id = $post_id->ID;
     $content = get_post_field( 'post_content', $post_id );
     $content = do_shortcode($content);
@@ -528,6 +529,7 @@ function get_gym_by_feature2($atts) {
       $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
       $content .= $content_text;
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
+      // $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
       $content .= '</div>';
       $count++;
     }
@@ -590,14 +592,14 @@ function gym_service_list() {
 
   $content = '<ul class="service__list">';
   $custom_fields = get_post_custom( $post_id );
-  if( $custom_fields['pickup'][0] === '1' ) $content .= '<li class="service__item service__item--osusume">おすすめジム</li>';
-  if( $custom_fields['woman-only'][0] === '1' ) $content .= '<li class="service__item service__item--woman">女性限定</li>';
-  if( $custom_fields['woman-osusume'][0] === '1' ) $content .= '<li class="service__item service__item--woman-osusume">女性におすすめ</li>';
-  if( $custom_fields['teaching-meals'][0] === '1' ) $content .= '<li class="service__item">食事指導</li>';
-  if( $custom_fields['private-room'][0] === '1' ) $content .= '<li class="service__item">完全個室</li>';
-  if( $custom_fields['credit-card'][0] === '1' ) $content .= '<li class="service__item">クレジットOK</li>';
-  if( $custom_fields['installment-payment'][0] === '1' ) $content .= '<li class="service__item">分割支払い</li>';
-  if( $custom_fields['repayment'][0] === '1' ) $content .= '<li class="service__item">返金保証あり</li>';
+  if( isset( $custom_fields['pickup'] ) && $custom_fields['pickup'][0] === '1' ) $content .= '<li class="service__item service__item--osusume">おすすめジム</li>';
+  if( isset( $custom_fields['woman-only'] ) && $custom_fields['woman-only'][0] === '1' ) $content .= '<li class="service__item service__item--woman">女性限定</li>';
+  if( isset( $custom_fields['woman-osusume'] ) && $custom_fields['woman-osusume'][0] === '1' ) $content .= '<li class="service__item service__item--woman-osusume">女性におすすめ</li>';
+  if( isset( $custom_fields['teaching-meals'] ) && $custom_fields['teaching-meals'][0] === '1' ) $content .= '<li class="service__item">食事指導</li>';
+  if( isset( $custom_fields['private-room'] ) && $custom_fields['private-room'][0] === '1' ) $content .= '<li class="service__item">完全個室</li>';
+  if( isset( $custom_fields['credit-card'] ) && $custom_fields['credit-card'][0] === '1' ) $content .= '<li class="service__item">クレジットOK</li>';
+  if( isset( $custom_fields['installment-payment'] ) && $custom_fields['installment-payment'][0] === '1' ) $content .= '<li class="service__item">分割支払い</li>';
+  if( isset( $custom_fields['repayment'] ) && $custom_fields['repayment'][0] === '1' ) $content .= '<li class="service__item">返金保証あり</li>';
 
   $content .= '</ul>';
 

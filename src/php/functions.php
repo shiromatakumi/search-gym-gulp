@@ -245,7 +245,8 @@ function get_average_star() {
     }
   }
   if( $star_num_sum || $comment_array ) {
-    return $star_num_sum/count($comment_array); 
+    $average = $star_num_sum/count($comment_array);
+    return round($average,1); 
   }
 }
 /** ===================================================

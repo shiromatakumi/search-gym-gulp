@@ -7,7 +7,7 @@ if( @get_the_excerpt() ) {
 
 if(is_singular()){
   if(have_posts()): while(have_posts()): the_post();
-    if($excerpt) echo '<meta property="og:description" content="'.$excerpt.'">'."\n";
+    if( isset( $excerpt ) ) echo '<meta property="og:description" content="'.$excerpt.'">'."\n";
   endwhile; endif;
   $title = get_the_title();
   if(is_front_page()){

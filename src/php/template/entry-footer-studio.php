@@ -38,12 +38,14 @@
     </div>
     <?php $avarage_star = get_average_star(); ?>
     <?php if( $avarage_star ): ?>
+    <div class="gym-rating-area">
       <h3 class="gym-rating">評価</h3>
-    <div class="star-rating">
-      <div class="star-rating-front" style="width: <?php echo ($avarage_star/5)*100; ?>%">★★★★★</div>
-      <div class="star-rating-back">★★★★★</div>
+      <div class="star-rating">
+        <div class="star-rating-front" style="width: <?php echo ($avarage_star/5)*100; ?>%">★★★★★</div>
+        <div class="star-rating-back">★★★★★</div>
+      </div>
+      <p>平均: <?php echo $avarage_star; ?>点</p>
     </div>
-    <p>点数: <?php echo $avarage_star; ?>点</p>
     <?php endif; ?>
     <?php // get_average_star(); ?>
     <div class="studio-kuchikomi">
