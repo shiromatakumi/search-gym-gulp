@@ -169,9 +169,23 @@ function get_studio_lines($atts){
     while ( $my_query->have_posts() ) {
       $my_query->the_post();
 
+      $post_id = $my_query->posts[$count]->ID;
+      $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
+      $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
       $title = $my_query->posts[$count]->post_title;
       // ベースとなるジムのアフィコードを取得
+      $meta_values = get_post_meta($post_id, 'base_gym', true);
+      $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
+      $post_base_id = $post_base_obj->ID;
+      $aficode = get_post_meta($post_base_id, 'aficode', true);
+
+      $content .= '<div class="gym-content">';
       $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
+      $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
+      $content .= $content_text;
+      if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
+      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
+      $content .= '</div>';
       $count++;
     }
   }
