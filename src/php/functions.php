@@ -1,4 +1,5 @@
 <?php
+
 require_once( 'lib/functions-shortcode.php' );
 require_once( 'lib/functions-widget.php' );
 require_once( 'lib/functions-edit.php' );
@@ -94,6 +95,23 @@ function create_post_type() {
       "labels" => array(
           "name" => __( "路線" ), // 表示する投稿タイプ名
           "singular_name" => __( "路線" )
+        ),
+      "public" => true,
+      "menu_position" =>8,
+      'supports' => array(
+        'title',
+        'editor',
+        'excerpt',
+        'custom-fields',
+        'post-formats'
+      ), //編集画面で使用するフィールド
+    )
+  );
+  register_post_type( "template", // 投稿タイプ名の定義
+    array(
+      "labels" => array(
+          "name" => __( "テンプレート用" ), // 表示する投稿タイプ名
+          "singular_name" => __( "テンプレート用" )
         ),
       "public" => true,
       "menu_position" =>8,
@@ -227,7 +245,8 @@ function get_average_star() {
     }
   }
   if( $star_num_sum || $comment_array ) {
-    return $star_num_sum/count($comment_array); 
+    $average = $star_num_sum/count($comment_array);
+    return round($average,1); 
   }
 }
 /** ===================================================

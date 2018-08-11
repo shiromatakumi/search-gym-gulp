@@ -1,10 +1,13 @@
 <meta name="twitter:card" content="summary">
-<?php $excerpt = preg_replace("/&#?[a-z0-9]{2,8};/i","",strip_tags(get_the_excerpt()));
-      $excerpt = trim($excerpt); ?>
 <?php 
+if( @get_the_excerpt() ) {
+  $excerpt = preg_replace("/&#?[a-z0-9]{2,8};/i","",strip_tags(@get_the_excerpt()));
+  $excerpt = trim($excerpt);
+}
+
 if(is_singular()){
   if(have_posts()): while(have_posts()): the_post();
-    echo '<meta name="twitter:description" content="'.$excerpt.'">'."\n";
+    if( isset( $excerpt ) ) echo '<meta name="twitter:description" content="'.$excerpt.'">'."\n";
   endwhile; endif;
   $title = get_the_title();
   if(is_front_page()){

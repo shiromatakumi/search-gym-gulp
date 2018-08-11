@@ -531,6 +531,9 @@ table {
     color: #787878;
     font-size: .9em;
 }
+.entry-content .hit-count {
+  color: #666;
+}
 /* entry-bottom */
 .near-studio {
   display: flex;
@@ -833,6 +836,9 @@ table {
   font-weight: normal;
 }
 /* クチコミ */
+.studio-kuchikomi {
+  margin-bottom: 20px;
+}
 .comment-form {
   display: -webkit-flex;
   display: flex;
@@ -864,6 +870,12 @@ table {
 .comment-form label {
   display: block;
 }
+.comment-notes-after {
+  width: 100%;
+  order: 20;
+  font-size: .9rem;
+  color: #666;
+}
 .form-submit .submit {
   width: 200px;
   height: 34px;
@@ -879,24 +891,19 @@ table {
   margin-bottom: 2px;
 }
 .comment-notes {
-  -webkit-order: 1;
   order: 1;
   display: none;
 }
 .comment-form-star {
-  -webkit-order: 2;
   order: 2;
 }
 .comment-form-author {
-  -webkit-order: 3;
   order: 3;
 }
 .comment-form-comment {
-  -webkit-order: 4;
   order: 4;
 }
 .form-submit {
-  -webkit-order: 10;
   order: 10;
 }
 .evaluation{
@@ -948,6 +955,10 @@ table {
 }
 .comment .reply {
   display: none;
+}
+
+.gym-rating-area {
+  margin-bottom: 60px;
 }
 .author-star {
   color: #eca41c;
@@ -1060,5 +1071,11 @@ table {
   }
   .recommend-gym {
     width: 100%;
+  }
+  .service__item {
+    font-size: .9rem;
+    padding: 0 8px;
+    height: auto;
+    line-height: 1.6rem;
   }
 }
