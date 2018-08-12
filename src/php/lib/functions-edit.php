@@ -45,9 +45,12 @@ add_action( 'admin_print_footer_scripts', 'gym_add_quick_tag' );
 //　元データから月当たり料金を取得する
 function add_auto_post_meta() {
   global $wpdb, $post;
-  $base_gym = get_post_meta( $post->ID, 'base_gym', true );
+  $base_gym = @get_post_meta( $post->ID, 'base_gym', true );
+  if( !isset( $base_gym ) ) return;
 
   $post_data = get_page_by_path($base_gym, "OBJECT", "gym");
+  if( !isset( $post_data ) ) return;
+
   $post_id = $post_data->ID;
   $price_per = get_post_meta( $post_id, 'price_per', true );
   if($price_per) {

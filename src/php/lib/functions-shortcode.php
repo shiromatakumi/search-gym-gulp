@@ -10,11 +10,18 @@
 function getBaseGymData($atts) {
   $gym_slug = $atts['slug'];
 
+  global $entry_post_type;
+
   if( isset( $gym_slug ) ) {
     $post_id = get_page_by_path($gym_slug, "OBJECT", "gym");
     $post_id = $post_id->ID;
     $content = get_post_field( 'post_content', $post_id );
     $content = do_shortcode($content);
+    if( $entry_post_type === 'studio' ) {
+      $afilink = get_post_meta( $post_id, 'aficode', true );
+      $afilink = '<p class="gym-content__btn">' . $afilink . '</p>';
+      $content .= $content . $afilink;
+    }
     return apply_filters( 'the_content', $content );
   }
 }
@@ -341,7 +348,7 @@ add_shortcode('prefecture', 'getGymByPrefecture');
 function getGymForWoman($atts) {
 
   $content = '';
-  $key = $atts["place"];
+  $place = $atts["place"];
 
   $tag = get_term_by('name', '重複', 'gym_tag');
   $tag_id = $tag->term_id;
@@ -349,7 +356,7 @@ function getGymForWoman($atts) {
   $meta_query_args = array(
     array(
       'key' => 'prefecture',
-      'value' => $key,
+      'value' => $place,
       'compare'=>'=',
     ),
     array(
@@ -412,6 +419,156 @@ function getGymForWoman($atts) {
 
 }
 add_shortcode('woman', 'getGymForWoman');
+
+/**
+ * 分割・クレジット支払いのジムを取得
+ */
+function get_gym_available_credit($atts) {
+
+  $content = '';
+  $place = $atts["place"];
+
+  $tag = get_term_by('name', '重複', 'gym_tag');
+  $tag_id = $tag->term_id;
+
+  $meta_query_args = array(
+    array(
+      'key' => 'prefecture',
+      'value' => $place,
+      'compare'=>'=',
+    ),
+    array(
+      array(
+        'key' => 'credit-card',
+        'value' => '1',
+        'compare'=>'='
+      ),
+      array(
+        'key' => 'installment-payment',
+        'value' => '1',
+        'compare'=>'=',
+      ),
+      'relation' => 'OR'
+    ),
+    'relation' => 'AND'
+  );
+
+  $args = array(
+    'post_type'        => 'gym',
+    'posts_per_page'   => -1,
+    'orderby'          => 'meta_value_num',
+    'order'            => 'ASC',
+    'tax_query' => array(
+    array(
+      'taxonomy'  => 'gym_tag',
+      'field'     => 'term_id',
+      'terms'     => $tag_id,
+      'operator'  => 'NOT IN'
+      )
+    ),
+    'meta_key' => 'price_per',
+    'meta_query' => $meta_query_args
+  );
+  $my_query = new WP_Query($args);
+  $count = 0;
+
+  if ( $my_query->have_posts() ) {
+    while ( $my_query->have_posts() ) {
+      $my_query->the_post();
+      $post_id = $my_query->posts[$count]->ID;
+      $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
+      $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
+      $title = $my_query->posts[$count]->post_title;
+      // ベースとなるジムのアフィコードを取得
+      $aficode = get_post_meta($post_id, 'aficode', true);
+
+      $content .= '<div class="gym-content">';
+      $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
+      $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
+      $content .= $content_text;
+      if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
+      $content .= '</div>';
+      $count++;
+    }
+  }
+  // 上書きされた$postを元に戻す
+  wp_reset_postdata();
+  return do_shortcode( $content );
+
+}
+add_shortcode('credit', 'get_gym_available_credit');
+
+
+/**
+ * エリアからクレジット、分割払いができるジムを検索するショートコード
+ */
+function get_gym_available_credit_by_area($atts) {
+  $content = '';
+
+  $region = $atts["region"];
+
+  if( !isset($region) ) return;
+
+  $args = array(
+    'post_type'        => 'studio',
+    'posts_per_page'   => -1,
+    'orderby'          => 'meta_value_num',
+    'order'            => 'ASC',
+    'meta_key' => 'price_per',
+    'meta_query' => array(
+      array(
+        'key' => 'region',
+        'value' => $region,
+        'compare'=>'=',
+      )
+    )
+  );
+  // いったんエリアのジムを全部取得する
+  $my_query = new WP_Query($args);
+  $count = 0;
+
+  if ( $my_query->have_posts() ) {
+    while ( $my_query->have_posts() ) {
+      $my_query->the_post();
+      $post_id = $my_query->posts[$count]->ID;
+
+      // 店舗からジムのIDを取得する
+      $meta_values = get_post_meta($post_id, 'base_gym', true);
+      $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
+      $post_base_id = $post_base_obj->ID;
+
+      $credit_value = get_post_meta($post_base_id, 'credit-card', true);
+      $installment_payment_value = get_post_meta($post_base_id, 'installment-payment', true);
+
+      if( $credit_value !== '1' && $installment_payment_value !== '1' ) {
+        $count++;
+        continue; //特徴が該当しなければ表示しない
+      }
+      $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
+      $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
+      $title = $my_query->posts[$count]->post_title;
+
+      // ベースとなるジムのアフィコードを取得
+      $aficode = get_post_meta($post_base_id, 'aficode', true);
+      
+      $content .= '<div class="gym-content">';
+      $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
+      $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
+      $content .= $content_text;
+      if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
+      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
+      $content .= '</div>';
+      $count++;
+    }
+  }
+  // 上書きされた$postを元に戻す
+  wp_reset_postdata();
+  return do_shortcode( $content );
+}
+add_shortcode('credit2', 'get_gym_available_credit_by_area');
+
+
+
 
 /**
  * 特徴と地域からジムを取得するショートコード
@@ -592,6 +749,24 @@ function only_show_post_type( $atts, $content='' ) {
   }
 }
 add_shortcode('posttype', 'only_show_post_type');
+
+/**
+ * アフィリエイトコードを取得する(店舗情報)
+ */
+function get_aficode_studio_page() {
+  global $entry_post_type;
+
+  if( $entry_post_type !== 'studio' ) return;
+  // 店舗からジムのIDを取得する
+  $meta_values = get_post_meta( get_the_ID(), 'base_gym', true );
+  $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
+  $post_base_id = $post_base_obj->ID;
+  $afilink = get_post_meta($post_base_id, 'aficode', true);
+
+  return '<p class="gym-content__btn">' . $afilink . '</p>';
+}
+add_shortcode('afilink', 'get_aficode_studio_page');
+
 
 function gym_service_list() {
 
