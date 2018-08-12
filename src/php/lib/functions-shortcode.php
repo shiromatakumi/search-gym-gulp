@@ -20,7 +20,7 @@ function getBaseGymData($atts) {
     if( $entry_post_type === 'studio' ) {
       $afilink = get_post_meta( $post_id, 'aficode', true );
       $afilink = '<p class="gym-content__btn">' . $afilink . '</p>';
-      $content .= $content . $afilink;
+      $content .= $afilink;
     }
     return apply_filters( 'the_content', $content );
   }
