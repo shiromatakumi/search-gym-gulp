@@ -1,6 +1,5 @@
 <div class="notfound">
 	<div class="nofound-title">
-
 		<?php if( is_search() || is_archive() ): ?>
 			記事が見つかりませんでした。
 		<?php else: ?>
