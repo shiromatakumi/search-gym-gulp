@@ -568,8 +568,6 @@ function get_gym_available_credit_by_area($atts) {
 add_shortcode('credit2', 'get_gym_available_credit_by_area');
 
 
-
-
 /**
  * 特徴と地域からジムを取得するショートコード
  */

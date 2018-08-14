@@ -3,6 +3,7 @@
 require_once( 'lib/functions-shortcode.php' );
 require_once( 'lib/functions-widget.php' );
 require_once( 'lib/functions-edit.php' );
+require_once( 'lib/functions-search-details.php' );
 
 add_theme_support( 'post-thumbnails' );
 add_theme_support( 'excerpt' );
@@ -370,13 +371,14 @@ remove_action('do_feed_rdf', 'do_feed_rdf');
 remove_action('do_feed_rss', 'do_feed_rss');
 remove_action('do_feed_rss2', 'do_feed_rss2');
 remove_action('do_feed_atom', 'do_feed_atom');
-
 // サイト全体の記事更新フィード、サイト全体のコメントフィードリンクの削除
 remove_action('wp_head', 'feed_links', 2);
 // 記事のコメント、記事アーカイブ、カテゴリなどのフィードリンクの削除
 remove_action('wp_head', 'feed_links_extra', 3);
 
-//親ページ判別
+/**
+ * 親ページ判別
+ */
 function is_child( $slug = "" ) {
   if( is_singular() )://投稿ページのとき（固定ページ含）
     global $post;
@@ -403,3 +405,27 @@ function is_child( $slug = "" ) {
   endif;
 }
 
+/**
+ * タイトルのカスタマイズ
+ */
+add_theme_support( 'title-tag' );
+
+function wp_document_title_separator( $separator ) {
+  $separator = '|';
+  return $separator;
+}
+add_filter( 'document_title_separator', 'wp_document_title_separator' );
+
+function wp_document_title_parts( $title ) {
+  if ( is_home() || is_front_page() ) {
+    unset( $title['tagline'] ); // キャッチフレーズを出力しない
+  } else if ( is_category() ) {
+    $title['title'] = '「' . $title['title'] . '」カテゴリーの記事一覧';
+  } else if ( is_tag() ) {
+    $title['title'] = '「' . $title['title'] . '」タグの記事一覧';
+  } else if ( is_archive() ) {
+    $title['title'] = $title['title'] . 'の記事一覧';
+  }
+  return $title;
+}
+add_filter( 'document_title_parts', 'wp_document_title_parts', 10, 1 );

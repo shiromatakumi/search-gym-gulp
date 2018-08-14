@@ -992,6 +992,53 @@ table {
 .star-rating-back {
   color: #ccc;
 }
+/**
+ * 詳細検索ページ
+ */
+.select-details {
+  margin-bottom: 40px;
+}
+.select-details__title {
+  margin: 50px 0 16px;
+  font-size: 1.6rem;
+  padding: .4em .6em;
+  background-color: #f7f7f7;
+  border-left: 10px solid #bd2929;
+}
+.area__title {
+  padding: .2em .6em;
+  border-left: 6px solid #bd2929;
+  margin: 46px 0 16px;
+  font-size: 1.2rem;
+}
+.select-details__label {
+  display: inline-block;
+  margin: 0 2px 6px 0;
+  padding: 4px 8px;
+  background-color: #f0f0f0;
+  font-size: .94rem;
+}
+.select-details__checkbox{
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.search-detail__submit {
+  width: 120px;
+  height: 34px;
+  color: #fff;
+  background-color: #d05858;
+  background-image: linear-gradient(0deg, #9f1616, #bd2929);
+  box-shadow: 2px 2px 2px rgba(0,0,0,.1);
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+.error-msg {
+  font-size: 1.1rem;
+  color: #ff0000;
+  font-weight: bold;
+}
 @media (max-width: 900px) {
   /* PC small */
   .main {
