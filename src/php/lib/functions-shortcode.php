@@ -214,6 +214,8 @@ function get_studio_lines($atts){
       $count++;
     }
   }
+  // 上書きされた$postを元に戻す
+  wp_reset_postdata();
 
   return $content;
 }

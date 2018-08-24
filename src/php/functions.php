@@ -232,13 +232,49 @@ function attach_sex_to_author( $author ) {
 }
 add_filter( 'get_comment_author_link', 'attach_sex_to_author' );
 
+function get_review_comment() {
+  $post_id =  get_the_ID();
+  $comment_array = get_comments( array(
+    'post_id' => $post_id,
+    'number'  => 50,
+    'status' => 'approve',
+  ) );
+  $content = '';
+  
+  if ( $comment_array ) {
+    $content = '<ol class="review-comment__list">';
+    foreach ($comment_array as $comment) {
+      $stars = get_comment_meta( $comment->comment_ID, 'star', false );
+      $star_num = $stars[0]; // 星の数
+      $reviewer_name = $comment->comment_author; //コメントした人の名前
+      $comment_text = nl2br( $comment->comment_content );
+      $comment_date = $comment->comment_date;
+
+      $content .= '<li class="review-comment__item">';
+      $content .= '<p class="reviewer_name">お名前：' . $reviewer_name . '</p>';
+      $content .= '<p class="comment_date">' . $comment_date . '</p>';
+      if( $star_num ) {
+        $content .= '<div class="star-rating"><div class="star-rating-front" style="width: ' . ($star_num/5)*100 . '%">★★★★★</div><div class="star-rating-back">★★★★★</div></div>';
+      } 
+      $content .= '<dl class="comment-text"><dt>コメント</dt>';
+      $content .= '<dd>' . $comment_text . '</dd></dl>';
+      $content .= '</li>';
+    }
+    $content .= '</ol>';
+    echo $content;
+  } else {
+    echo 'コメントはまだありません。';
+  }
+}
 
 function get_average_star() {
   $star_num_sum = 0;
   $comment_array = get_comments( array(
     'post_id' => get_the_ID(),
-    'meta_key'=> 'star'
+    'meta_key'=> 'star',
+    'status' => 'approve',
   ) );
+  
   if ( $comment_array ) {
     foreach ($comment_array as $star) {
       $stars = get_comment_meta( $star->comment_ID, 'star', false );
@@ -289,6 +325,9 @@ function get_recommend_gym($num, $position = 'sidebar') {
   return $content;
 }
 
+/**
+ * ジムページの下に店舗一覧を表示する関数
+ */
 function get_gym_region() {
 
   if( get_post_type() !== 'gym' ) {

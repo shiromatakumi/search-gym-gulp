@@ -34,6 +34,8 @@
           $count++;
         }
       }
+      // 上書きされた$postを元に戻す
+      wp_reset_postdata();
       ?>
     </div>
     <?php $avarage_star = get_average_star(); ?>
@@ -47,6 +49,10 @@
       <p>平均: <?php echo $avarage_star; ?>点</p>
     </div>
     <?php endif; ?>
+    <div class="reviewer-comments">
+      <h3 class="reviewer-comments-title">口コミ一覧</h3>
+      <?php get_review_comment(); ?>
+    </div>
     <?php // get_average_star(); ?>
     <div class="studio-kuchikomi">
       <?php comments_template(); ?>
