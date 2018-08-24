@@ -1,4 +1,5 @@
 <footer class="entry-footer">
+  <?php get_template_part( 'data/todofuken_list' ); ?>
   <?php get_gym_region(); ?>
   
   <div class="share-area share-area__buttom">
