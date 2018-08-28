@@ -797,3 +797,21 @@ function gym_service_list() {
   }
 }
 add_shortcode( 'service', 'gym_service_list' );
+
+/**
+ * 関連記事を表示するショートコード
+ */
+function get_kanren_article ($atts) {
+  if( !empty( $atts['slug'] ) ) {
+    $article_slug = $atts['slug'];
+  } else {
+    return '<p>記事が見つかりませんでした。</p>';
+  }
+  $post_object = get_page_by_path($article_slug, "OBJECT", "post");
+  $post_id = $post_object->ID;
+  $post_title = get_the_title( $post_id );
+  $post_url = get_permalink( $post_id );
+
+  return '<p><a href="' . $post_url . '">' . $post_title . '</a></p>';
+}
+add_shortcode( 'kanren', 'get_kanren_article' );
