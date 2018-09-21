@@ -42,22 +42,61 @@ add_action( 'admin_print_footer_scripts', 'gym_add_quick_tag' );
 /**
  * 記事保存時に自動でカスタムフィールドの値をセットする
  */
+function update_studio_price() {
+  global $wpdb, $post;
+
+  $slug_name = @$post->post_name;
+  $post_id = @$post->ID;
+
+  $price_value = @get_post_meta($post_id, 'price_per', true);
+  if( !isset( $price_value ) || !isset( $slug_name ) || !isset( $post_id ) ) return;
+
+  $args = array(
+    'post_type'        => 'studio',
+    'posts_per_page'   => -1,
+    'meta_query' => array(
+      array(
+        'key'     => 'base_gym',
+        'value'   => $slug_name
+      ),
+    ),
+  );
+  $my_query = new WP_Query($args);
+  $count = 0;
+
+  if ( $my_query->have_posts() ) {
+    while ( $my_query->have_posts() ) {
+      $my_query->the_post();
+
+      $studio_id = $my_query->posts[$count]->ID;
+      update_post_meta( $studio_id, 'price_per', $price_value);
+
+      $count++;
+    }
+  }
+
+  // 上書きされた$postを元に戻す
+  wp_reset_postdata();
+}
+add_action('save_post', 'update_studio_price');
+
+/**
+ * 記事保存時に自動でカスタムフィールドの値をセットする
+ */
 //　元データから月当たり料金を取得する
-function add_auto_post_meta() {
+function update_studio_price_2() {
   global $wpdb, $post;
   $base_gym = @get_post_meta( $post->ID, 'base_gym', true );
   if( !isset( $base_gym ) ) return;
-
   $post_data = get_page_by_path($base_gym, "OBJECT", "gym");
   if( !isset( $post_data ) ) return;
-
   $post_id = $post_data->ID;
   $price_per = get_post_meta( $post_id, 'price_per', true );
   if($price_per) {
     update_post_meta( $post->ID, 'price_per', $price_per);
   }
 }
-add_action('save_post', 'add_auto_post_meta');
+add_action('save_post', 'update_studio_price_2');
 
 /**
  * アフィリエイトコードを保存するためのカスタムフィールド

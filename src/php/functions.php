@@ -8,6 +8,9 @@ require_once( 'lib/functions-search-details.php' );
 add_theme_support( 'post-thumbnails' );
 add_theme_support( 'excerpt' );
 
+// デフォルトのnext,prevを削除
+remove_action('wp_head', 'adjacent_posts_rel_link_wp_head', 10);
+
 add_image_size( 'sidebar-thumb', 380, 240, true );
 add_image_size( 'sidebar-thumb-2x', 760, 480, true );
 
@@ -468,3 +471,16 @@ function wp_document_title_parts( $title ) {
   return $title;
 }
 add_filter( 'document_title_parts', 'wp_document_title_parts', 10, 1 );
+
+/**
+ * ショートコード展開後の抜粋を取得する関数
+ */
+function get_excerpt_after_shortcode() {
+  global $post;
+  $content = $post->post_content;
+  $content = do_shortcode( $content );
+  $content = strip_tags( $content );
+  $content = mb_substr( $content,0, 140 );
+  $content = str_replace( array( "\r\n", "\n", "\r", "&nbsp;" ), '', $content );
+  return $content;
+}

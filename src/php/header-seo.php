@@ -4,14 +4,18 @@ $blog_description = get_bloginfo('description');
 $post_id = get_the_ID();
 ?>
 <?php // メタディスクリプションの設定 ?>
-<?php if (is_home() && !is_paged()): //トップページ?>
+<?php if ( is_home() && !is_paged() ): //トップページ?>
 <meta name="description" content="<?php echo $blog_description; ?>">
-<?php elseif(is_singular()): //投稿・固定ページ?>
-  <?php if(have_posts()): while(have_posts()): the_post(); ?>
-    <?php $excerpt = preg_replace( "/&#?[a-z0-9]{2,8};/i", "", strip_tags( get_the_excerpt() ) );
-      $excerpt = trim($excerpt); ?>
-    <?php if( $excerpt ): ?>
+<?php elseif( is_singular() ): //投稿・固定ページ?>
+  <?php if( have_posts() ): while( have_posts() ): the_post(); ?>
+    <?php if ( has_excerpt() ): ?>
+      <?php $excerpt = preg_replace( "/&#?[a-z0-9]{2,8};/i", "", strip_tags( get_the_excerpt() ) );
+        $excerpt = trim($excerpt); ?>
+      <?php if( $excerpt ): ?>
 <meta name="description" content="<?php echo $excerpt; ?>">
+      <?php endif; ?>
+    <?php else: ?>
+<meta name="description" content="<?php echo get_excerpt_after_shortcode(); // functions.php ?>">
     <?php endif; ?>
   <?php endwhile; endif; ?>
 <?php elseif( is_category() ): //カテゴリー?>
@@ -20,4 +24,8 @@ $post_id = get_the_ID();
 <meta name="description" content="<?php echo '「' . single_tag_title('', false) . '」タグの記事一覧ページ'; ?>">
 <?php else: ?>
 <meta name="description" content="<?php echo $blog_description; ?>">
+<?php endif; ?>
+<?php $post_type = get_post_type($post_id); ?>
+<?php if($post_type === 'template' || $post_type === 'gym'):  ?>
+<meta name="robots" content="noindex,nofollow">
 <?php endif; ?>

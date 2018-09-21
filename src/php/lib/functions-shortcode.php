@@ -16,6 +16,7 @@ function getBaseGymData($atts) {
     $post_id = get_page_by_path($gym_slug, "OBJECT", "gym");
     $post_id = $post_id->ID;
     $content = get_post_field( 'post_content', $post_id );
+    $content = '<div class="gym-common-data">' . $content . '</div>';
     $content = do_shortcode($content);
     if( $entry_post_type === 'studio' ) {
       $afilink = get_post_meta( $post_id, 'aficode', true );
@@ -189,7 +190,6 @@ function get_studio_lines($atts){
   $my_query = new WP_Query($args);
   $count = 0;
 
-  // var_dump($my_query);
   if ( $my_query->have_posts() ) {
     while ( $my_query->have_posts() ) {
       $my_query->the_post();
@@ -247,6 +247,8 @@ function getGymByRegion($atts) {
   $count = 0;
   $hit_count = 0;
 
+  $prev_meta_value = "";
+
   if ( $my_query->have_posts() ) {
     while ( $my_query->have_posts() ) {
       $my_query->the_post();
@@ -260,15 +262,20 @@ function getGymByRegion($atts) {
       $post_base_id = $post_base_obj->ID;
       $aficode = get_post_meta($post_base_id, 'aficode', true);
 
-      $content .= '<div class="gym-content">';
+      $duplication = $meta_values === $prev_meta_value; // bool
+
+      $content .= !$duplication ? '<div class="gym-content">' : '<div class="gym-content gym-content--duplication">' ;
       $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
       $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
+      if( $duplication ) $content .= '<p class="gym-content__text-same">※ジムの内容は上の店舗と同じ</p>';
       $content .= $content_text;
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
       $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
       $content .= '</div>';
       $count++;
       $hit_count++;
+
+      $prev_meta_value = $meta_values;
     }
     $hit_count_text = '<p class="hit-count">' . $hit_count .'件のジムがヒットしました。</p>';
     $content = $hit_count_text . $content;
@@ -528,6 +535,7 @@ function get_gym_available_credit_by_area($atts) {
   // いったんエリアのジムを全部取得する
   $my_query = new WP_Query($args);
   $count = 0;
+  $prev_meta_value = '';
 
   if ( $my_query->have_posts() ) {
     while ( $my_query->have_posts() ) {
@@ -546,6 +554,9 @@ function get_gym_available_credit_by_area($atts) {
         $count++;
         continue; //特徴が該当しなければ表示しない
       }
+      $duplication = $meta_values === $prev_meta_value; // bool
+      
+
       $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
       $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
       $title = $my_query->posts[$count]->post_title;
@@ -553,14 +564,17 @@ function get_gym_available_credit_by_area($atts) {
       // ベースとなるジムのアフィコードを取得
       $aficode = get_post_meta($post_base_id, 'aficode', true);
       
-      $content .= '<div class="gym-content">';
+      $content .= !$duplication ? '<div class="gym-content">' : '<div class="gym-content gym-content--duplication">' ;
       $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
       $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
+      if( $duplication ) $content .= '<p class="gym-content__text-same">※ジムの内容は上の店舗と同じ</p>';
       $content .= $content_text;
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
       $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
       $content .= '</div>';
       $count++;
+
+      $prev_meta_value = $meta_values;
     }
   }
   // 上書きされた$postを元に戻す
@@ -568,7 +582,6 @@ function get_gym_available_credit_by_area($atts) {
   return do_shortcode( $content );
 }
 add_shortcode('credit2', 'get_gym_available_credit_by_area');
-
 
 /**
  * 特徴と地域からジムを取得するショートコード
@@ -671,6 +684,7 @@ function get_gym_by_feature2($atts) {
   // いったんエリアのジムを全部取得する
   $my_query = new WP_Query($args);
   $count = 0;
+  $prev_meta_value = '';
 
   if ( $my_query->have_posts() ) {
     while ( $my_query->have_posts() ) {
@@ -688,6 +702,8 @@ function get_gym_by_feature2($atts) {
         $count++;
         continue; //特徴が該当しなければ表示しない
       }
+      $duplication = $meta_values === $prev_meta_value; // bool
+
       $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
       $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
       $title = $my_query->posts[$count]->post_title;
@@ -695,14 +711,17 @@ function get_gym_by_feature2($atts) {
       // ベースとなるジムのアフィコードを取得
       $aficode = get_post_meta($post_base_id, 'aficode', true);
       
-      $content .= '<div class="gym-content">';
+      $content .= !$duplication ? '<div class="gym-content">' : '<div class="gym-content gym-content--duplication">' ;
       $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
       $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
+      if( $duplication ) $content .= '<p class="gym-content__text-same">※ジムの内容は上の店舗と同じ</p>';
       $content .= $content_text;
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
       $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
       $content .= '</div>';
       $count++;
+
+      $prev_meta_value = $meta_values;
     }
   }
   // 上書きされた$postを元に戻す
@@ -710,6 +729,25 @@ function get_gym_by_feature2($atts) {
   return do_shortcode( $content );
 }
 add_shortcode('feature2', 'get_gym_by_feature2');
+
+/*
+
+
+      $duplication = $meta_values === $prev_meta_value; // bool
+
+      $content .= !$duplication ? '<div class="gym-content">' : '<div class="gym-content gym-content--duplication">' ;
+      $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
+      $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
+      if( $duplication ) $content .= '<p class="gym-content__text-same">※ジムの内容は上の店舗と同じ</p>';
+      $content .= $content_text;
+      if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
+      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
+      $content .= '</div>';
+      $count++;
+      $hit_count++;
+
+      $prev_meta_value = $meta_values;
+*/
 
 /**
  *  Google Mapの埋め込み用

@@ -535,6 +535,24 @@ table {
 .entry-content .hit-count {
   color: #666;
 }
+.entry-content blockquote {
+  background-color: #f0f0f0;
+  position: relative;
+  z-index: 1;
+  margin: 1em 0 1em;
+  padding: 2em;
+}
+.entry-content blockquote:before {
+  font-family: 'Georgia',sans-serif;
+  content: '“';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  font-size: 70px;
+  line-height: 1;
+  z-index: -1;
+  color: #fff;
+}
 /* entry-bottom */
 .near-studio {
   display: flex;
@@ -571,8 +589,18 @@ table {
   box-shadow: 0 2px 2px rgba(0,0,0,.2);
   margin-bottom: 20px;
 }
+.gym-content--duplication {
+  .gym-common-data {
+    display: none;
+  }
+}
 .gym-content__thumb {
   margin-bottom: 1em;
+}
+.entry-content .gym-content__text-same {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #e62424;
 }
 .entry-content .gym-content__link {
     position: relative;
