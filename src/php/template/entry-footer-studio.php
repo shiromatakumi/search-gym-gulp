@@ -3,11 +3,51 @@
    * 店舗情報ページに表示させる記事下
    */
  ?>
+    <?php 
+      $post_id = get_the_ID();
+      $region = get_post_meta( $post_id, 'region', false );
+      $get_num = 0;
+
+      if( $region ) {
+        echo '<h3>このジムが掲載されている記事</h3>';
+        echo '<div class="area-article">';
+        foreach($region as $item) {
+          $count = 0;
+          $args = array(
+            'post_type'       => 'post',
+            'posts_per_page'  => -1,
+            'orderby'        => 'date',
+            'meta_key'        => 'area',
+            'meta_value'      => $item,
+          );
+          $my_query = new WP_Query($args);
+
+          if ( $my_query->have_posts() ) {
+
+            $get_num += $my_query->post_count; //件数を足していく
+
+            while ( $my_query->have_posts() ) {
+              $my_query->the_post();
+              $post_id = $my_query->posts[$count]->ID;
+              $content = '<div class="area-article__item">';
+              $content .= '<p class="area-article__title"><a href="' . get_the_permalink() . '">' . $my_query->posts[$count]->post_title .'</a></p>';
+              $content .= '</div>';
+              echo $content;
+              $count++;
+            }
+          }
+        }
+        if( $get_num === 0 ) echo '<p>掲載記事はまだありません。</p>';
+        echo '</div>';
+      }
+
+      // 上書きされた$postを元に戻す
+      wp_reset_postdata();
+    ?>
     <h3 class="near-studio__heading">同じエリアのジム一覧</h3>
     <div class="near-studio">
       <?php // 近くのジムを検索
-      $post_id = get_the_ID();
-      $region = get_post_meta( $post_id, 'region', true );
+      
       $count = 0;
       $args = array(
         'post_type'       => 'studio',

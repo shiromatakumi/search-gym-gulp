@@ -246,6 +246,7 @@ function getGymByRegion($atts) {
   $my_query = new WP_Query($args);
   $count = 0;
   $hit_count = 0;
+  $pickup_contents = "";
 
   $prev_meta_value = "";
 
@@ -255,30 +256,51 @@ function getGymByRegion($atts) {
       $post_id = $my_query->posts[$count]->ID;
       $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
       $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
+      // タイトル
       $title = $my_query->posts[$count]->post_title;
-      // ベースとなるジムのアフィコードを取得
+      // リンク
+      $details_link = get_the_permalink();
+      // ベースのジム情報のidを取得
       $meta_values = get_post_meta($post_id, 'base_gym', true);
       $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
       $post_base_id = $post_base_obj->ID;
+      // ベースとなるジムのアフィコードを取得
       $aficode = get_post_meta($post_base_id, 'aficode', true);
-
+      // 前回と同じジムかの判定
       $duplication = $meta_values === $prev_meta_value; // bool
 
-      $content .= !$duplication ? '<div class="gym-content">' : '<div class="gym-content gym-content--duplication">' ;
+      //おすすめジムかの判定
+      $is_pickup = get_post_meta($post_base_id, 'pickup', true);
+      if( $is_pickup && !$duplication ) {
+        $pickup_contents .= '<div class="pickup-gym-this-area__item">';
+        $pickup_contents .= '<div class="gym-content__thumb gym-content__thumb--pickup"><a href="' . $details_link . '"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></a></div>';
+        $pickup_contents .= '<p>' . $title . '</p>';
+        $pickup_contents .= '<p class="pickup-gym-this-area__btn">' . $aficode . '</p>';
+        $pickup_contents .= '</div>';
+      } 
+
+      $content .= !$duplication ? '<div class="gym-content">' : '<div class="gym-content gym-content--duplication">' ; // 前回と同じジムだったらクラスを付与
       $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
       $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
       if( $duplication ) $content .= '<p class="gym-content__text-same">※ジムの内容は上の店舗と同じ</p>';
       $content .= $content_text;
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
-      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
+      $content .= '<p class="gym-content__detail"><a href="' . $details_link . '">詳細を見る</a></p>';
       $content .= '</div>';
       $count++;
       $hit_count++;
 
       $prev_meta_value = $meta_values;
     }
+
     $hit_count_text = '<p class="hit-count">' . $hit_count .'件のジムがヒットしました。</p>';
     $content = $hit_count_text . $content;
+    
+    if( $pickup_contents ) {
+      $pickup_text = '<h2>このエリアのおすすめジム（一回当たり安い順）</h2>';
+      $pickup_text .= '<div class="pickup-gym-this-area">' . $pickup_contents . '</div><h2>トレーニング一回当たりが安い順（全件）</h2>';
+      $content = $pickup_text . $content;
+    } 
   }
 
   // 上書きされた$postを元に戻す

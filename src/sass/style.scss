@@ -553,6 +553,15 @@ table {
   z-index: -1;
   color: #fff;
 }
+/* pickup gym this area */
+.pickup-gym-this-area {
+  margin-bottom: 40px;
+}
+.pickup-gym-this-area__item {
+  padding: 18px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+}
 /* entry-bottom */
 .near-studio {
   display: flex;
@@ -578,6 +587,9 @@ table {
   padding: .8em .6em;
   background: #f0f0f0;
   font-size: 1.2rem;
+}
+.area-article {
+  margin-bottom: 40px;
 }
 /**
  * 前テーマから引き継ぎ
@@ -654,8 +666,6 @@ table {
   border: 6px solid transparent;
   border-left: 8px solid rgba(255,255,255,.4);
 }
-
-
 .gym-content__desc-list dt {
   font-weight: bold;
   padding: 4px 4px 4px 10px;
