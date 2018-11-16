@@ -21,7 +21,6 @@ if(!function_exists( 'gym_add_quick_tag' )) {
     if (wp_script_is('quicktags')){?>
       <script>
         QTags.addButton('qt-link','枠で囲んだリンク','<p class="gym-content__link"></p>');
-        QTags.addButton('qt-btn','ボタンリンク','<p class="gym-content__btn"></p>');
         QTags.addButton('qt-place','アクセス用見出しとテーブル','<h3><?php echo $page_title; ?>のアクセス</h3>\n<dl class="gym-content__desc-list">\n<dt>住所</dt>\n<dd></dd>\n<dt>最寄駅</dt>\n<dd></dd>\n<dt>営業時間</dt>\n<dd></dd>\n</dl>');
         QTags.addButton('qt-table','ジム情報テーブル', '<?php echo $gym_table; ?>');
         QTags.addButton('qt-h-course','コース見出し', '<h3><?php echo $page_title; ?>のコースと料金</h3>');
