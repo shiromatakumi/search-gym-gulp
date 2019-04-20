@@ -209,7 +209,7 @@ function get_studio_lines($atts){
       $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
       $content .= $content_text;
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
-      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
+      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">ジム情報を見る</a></p>';
       $content .= '</div>';
       $count++;
     }
@@ -285,7 +285,7 @@ function getGymByRegion($atts) {
       if( $duplication ) $content .= '<p class="gym-content__text-same">※ジムの内容は上の店舗と同じ</p>';
       $content .= $content_text;
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
-      $content .= '<p class="gym-content__detail"><a href="' . $details_link . '">詳細を見る</a></p>';
+      $content .= '<p class="gym-content__detail"><a href="' . $details_link . '">ジム情報を見る</a></p>';
       $content .= '</div>';
       $count++;
       $hit_count++;
@@ -296,7 +296,7 @@ function getGymByRegion($atts) {
     $hit_count_text = '<p class="hit-count">' . $hit_count .'件のジムがヒットしました。</p>';
     $content = $hit_count_text . $content;
     
-    if( $pickup_contents ) {
+    if( false ) {
       $pickup_text = '<h2>このエリアのおすすめジム（一回当たり安い順）</h2>';
       $pickup_text .= '<div class="pickup-gym-this-area">' . $pickup_contents . '</div><h2>トレーニング一回当たりが安い順（全件）</h2>';
       $content = $pickup_text . $content;
@@ -592,7 +592,7 @@ function get_gym_available_credit_by_area($atts) {
       if( $duplication ) $content .= '<p class="gym-content__text-same">※ジムの内容は上の店舗と同じ</p>';
       $content .= $content_text;
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
-      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
+      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">ジム情報を見る</a></p>';
       $content .= '</div>';
       $count++;
 
@@ -739,7 +739,7 @@ function get_gym_by_feature2($atts) {
       if( $duplication ) $content .= '<p class="gym-content__text-same">※ジムの内容は上の店舗と同じ</p>';
       $content .= $content_text;
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
-      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
+      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">ジム情報を見る</a></p>';
       $content .= '</div>';
       $count++;
 
@@ -763,7 +763,7 @@ add_shortcode('feature2', 'get_gym_by_feature2');
       if( $duplication ) $content .= '<p class="gym-content__text-same">※ジムの内容は上の店舗と同じ</p>';
       $content .= $content_text;
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
-      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">詳細を見る</a></p>';
+      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">ジム情報を見る</a></p>';
       $content .= '</div>';
       $count++;
       $hit_count++;

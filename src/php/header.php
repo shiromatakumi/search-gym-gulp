@@ -23,6 +23,13 @@
   gtag('config', '<?php echo $analytics_tag; ?>');
 </script>
 <?php endif ?>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-4005490798475990",
+          enable_page_level_ads: true
+     });
+</script>
 </head>
 <body <?php body_class(); ?>>
   <div class="container">

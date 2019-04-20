@@ -1,28 +1,30 @@
 <meta property="og:type" content="<?php echo (is_singular() ? 'article' : 'website'); ?>">
 <?php 
 if( @get_the_excerpt() ) {
-  $excerpt = preg_replace("/&#?[a-z0-9]{2,8};/i","",strip_tags(@get_the_excerpt()));
-  $excerpt = trim($excerpt);
+  $excerpt = preg_replace( "/&#?[a-z0-9]{2,8};/i", "", strip_tags( @get_the_excerpt() ) );
+  $excerpt = trim( $excerpt );
 }
 
-if(is_singular()){
-  if(have_posts()): while(have_posts()): the_post();
-    if( isset( $excerpt ) ) echo '<meta property="og:description" content="'.$excerpt.'">'."\n";
+$site_name = get_bloginfo( 'name' );
+
+if( is_singular() ){
+  if( have_posts() ): while( have_posts() ): the_post();
+    if( isset( $excerpt ) ) echo '<meta property="og:description" content="' . $excerpt . '">' . "\n";
   endwhile; endif;
   $title = get_the_title();
-  if(is_front_page()){
-    $title = get_bloginfo('name');
+  if( is_front_page() ){
+    $title = $site_name . ' | ' . get_bloginfo( 'description' );
   }
-  echo '<meta property="og:title" content="'; echo $title; echo '">'."\n";
+  echo '<meta property="og:title" content="' . $title . '">'."\n";
   echo '<meta property="og:url" content="'; the_permalink(); echo '">'."\n";
 } else {
-  $description = get_bloginfo('description');
-  $title = get_bloginfo('name');
+  $description = !empty( get_option( 'meta_description' ) ) ? get_option( 'meta_description' ) : get_bloginfo( 'description' );
+  $title = $site_name . ' | ' . get_bloginfo( 'description' );
   $url = home_url();
 
   echo '<meta property="og:description" content="'.$description.'">'."\n";
-  echo '<meta property="og:title" content="'; echo $title; echo '">'."\n";
-  echo '<meta property="og:url" content="'; echo $url; echo '">'."\n";
+  echo '<meta property="og:title" content="' . $title . '">'."\n";
+  echo '<meta property="og:url" content="' . $url . '">'."\n";
 }
 
 if(is_singular()){
@@ -31,13 +33,13 @@ if(is_singular()){
     $image = wp_get_attachment_image_src( $image_id, 'full');
     echo '<meta property="og:image" content="'.$image[0].'">'."\n";
   } elseif(has_site_icon()){
-    echo '<meta property="og:image" content="'.get_site_icon_url().'">'."\n";
+    echo '<meta property="og:image" content="'. get_site_icon_url() .'">'."\n";
   }
 } else {
   if(has_site_icon()){
-    echo '<meta property="og:image" content="'.get_site_icon_url().'">'."\n";
+    echo '<meta property="og:image" content="'. get_site_icon_url() .'">'."\n";
   }
 }
 ?>
-<meta property="og:site_name" content="<?php bloginfo('name'); ?>">
+<meta property="og:site_name" content="<?php echo $site_name; ?>">
 <meta property="og:locale" content="ja_JP">

@@ -1,6 +1,6 @@
 <?php 
 $blog_name = get_bloginfo('name');
-$blog_description = get_bloginfo('description');
+$blog_description = !empty( get_option( 'meta_description' ) ) ? get_option( 'meta_description' ) : get_bloginfo( 'description' );
 $post_id = get_the_ID();
 ?>
 <?php // メタディスクリプションの設定 ?>

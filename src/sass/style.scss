@@ -9,7 +9,7 @@ html, body {
   box-sizing: border-box;
 }
 body {
-  font-family: "ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","メイリオ",Meiryo,"ＭＳ Ｐゴシック",sans-serif;
+      font-family: -apple-system,BlinkMacSystemFont,San Fransisco,Segoe UI,Helvetica Neue,Helvetica,Arial,"游ゴシック Medium",Yu Gothic Medium,"游ゴシック体",YuGothic,Yu Gothic,"メイリオ",Meiryo,MS PGothic,sans-serif;
   color: #111;
   line-height: 1.5;
 }
@@ -36,22 +36,16 @@ table {
  */
 .header {
   width: 100%;
-  position: fixed;
-  left: 0;
-  top: 0;
+  position: relative;
   background-color: #111;
   border-bottom: 2px solid #bd2929;
-  box-shadow: 0 2px 2px rgba(0,0,0,.2);
   padding: 0 10px;
   height: 50px;
-  z-index: 100;
 }
-.container {
-  margin-top: 50px;
-}
+
 .wrapper-inner {
   width: 92%;
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 40px auto 0;
   padding-top: 40px;
   display: flex;
@@ -59,8 +53,7 @@ table {
   justify-content: space-between;
 }
 .main {
-  width: 700px;
-  width: calc(100% - 300px);
+  width: calc(100% - 340px);
 }
 .main-inner {
   padding: 0 0 40px;
@@ -114,12 +107,15 @@ table {
 }
 .widget ul li {
   margin-bottom: 8px;
+  a {
+    color: #111;
+  }
 }
 /**
  * sidebar
  */
 .sidebar {
-  width: 280px;
+  width: 320px;
 }
 .widget--sidebar {
   margin-bottom: 40px;
@@ -553,6 +549,46 @@ table {
   z-index: -1;
   color: #fff;
 }
+.entry-content blockquote p:last-child {
+	margin-bottom: 0;
+}
+#toc_container {
+	padding: 20px;
+	width: 100% !important;
+	border-color: #eee;
+}
+#toc_container.no_bullets .toc_list li {
+	margin-bottom: 6px;
+	font-size: .9rem;
+}
+.calc-box {
+	border: 2px solid #bd2928;
+	background-color: #fff8f8;
+	padding: 30px 16px 16px;
+	margin: 2rem 0 20px;
+	position: relative;
+	border-radius: 4px;
+}
+.calc-box p:last-child {
+  margin-bottom: 0;
+}
+.entry-content .calc-box__title {
+  position: absolute;
+	margin: 0;
+	top: -14px;
+	background-color: #bd2928;
+	padding: 2px 8px;
+	left: 16px;
+	color: #fff;
+	font-size: .9rem;
+	border-radius: 6px;
+}
+.introduce-trainer {
+	background-color: #f9f9f9;
+	padding: 20px;
+	text-align: center;
+	margin-top: 40px;
+}
 /* pickup gym this area */
 .pickup-gym-this-area {
   margin-bottom: 40px;
@@ -636,35 +672,40 @@ table {
     font-weight: bold;
     border-radius: 5px 5px 0 0;
 }
-
+.entry-content .moushikomi-ohayameni {
+  margin-bottom: 4px;
+  font-size: .8rem;
+  color: #a10f0f;
+  text-align: center;
+}
 .entry-content .gym-content__btn {
   text-align: center;
 }
 .entry-content .gym-content__btn a {
   display: inline-block;
   background-color: #d05858;
-  background-image: linear-gradient(0deg, #af5718,#e87b2b);
+  background-image: linear-gradient(0deg, #9f1616,#bd2929);
   padding: 12px 34px 12px 20px;
   color: #fff;
-  border-radius: 6px;
+  border-radius: 4px;
   font-size: 1.1rem;
   text-decoration: none;
   position: relative;
-  min-width: 260px;
+  min-width: 300px;
   box-shadow: 2px 2px 2px rgba(0,0,0,.2);
 }
 .entry-content .gym-content__btn a:hover {
   background-color: #ab3f3f;
-  background-image: linear-gradient(0deg, #9c4d15,#dc7225);
+  background-image: linear-gradient(0deg,#7b1111,#bd2f2f);
 }
 .gym-content__btn a:after {
   content: "";
   position: absolute;
-  right: 8px;
+  right: 10px;
   top: 50%;
-  margin-top: -6px;
-  border: 6px solid transparent;
-  border-left: 8px solid rgba(255,255,255,.4);
+  margin-top: -4px;
+  border: 4px solid transparent;
+  border-left: 6px solid rgba(255,255,255,.2);
 }
 .gym-content__desc-list dt {
   font-weight: bold;
@@ -700,32 +741,30 @@ table {
 /* 詳細へのリンクボタン */
 .gym-content__detail {
   text-align: center;
+  font-size: .9rem;
 }
-.entry-content .gym-content__detail a {
-  display: inline-block;
-  background-color: #d05858;
-  background-image: linear-gradient(0deg,#dc7979,#e2a3a3);
-  padding: 7px 34px 6px 20px;
-  color: #fff;
-  border-radius: 6px;
-  font-size: 1rem;
-  text-decoration: none;
+/* */
+.list-title {
+  border: 2px solid #bd2928;
+  background-color: #fff8f8;
+  padding: 20px 14px 12px 30px;
   position: relative;
-  min-width: 150px;
-  box-shadow: 2px 2px 2px rgba(0,0,0,.2);
+  margin: 40px 0 1em;
+  li {
+    margin-bottom: 12px;
+  }
 }
-.entry-content .gym-content__detail a:hover {
-  background-color: #ab3f3f;
-  background-image: linear-gradient(0deg, #bf5757, #d69393);
-}
-.gym-content__detail a:after {
-  content: "";
+.list-title:before {
+  content: attr(title);
   position: absolute;
-  right: 8px;
-  top: 50%;
-  margin-top: -3px;
-  border: 4px solid transparent;
-  border-left: 6px solid rgba(255,255,255,.4);
+  left: -2px;
+  bottom: 100%;
+  background-color: #bd2928;
+  display: inline-block;
+  padding: 1px 10px;
+  font-size: 12.8px;
+  font-size: .8rem;
+  color: #fff;
 }
 /* 対応しているサービス */
 .service__list {

@@ -403,6 +403,25 @@ function theme_customizer_extension($wp_customize) {
       'type' => 'textarea',
       'priority' => 20,
     ));
+
+  //セクション
+  $wp_customize->add_section( 'settings_seo', array (
+   'title' => 'SEOの設定',
+   'priority' => 100,
+  ));
+    //テーマ設定
+    $wp_customize->add_setting( 'meta_description', array (
+      'type' => 'option'
+    ));
+     //コントロールの追加
+    $wp_customize->add_control( 'meta_description', array(
+      'section' => 'settings_seo',
+      'settings' => 'meta_description',
+      'label' =>'トップページのmeta description',
+      'description' => 'トップページのmeta descriptionを設定してください。',
+      'type' => 'textarea',
+      'priority' => 30,
+    ));
 }
 add_action('customize_register', 'theme_customizer_extension');
 
@@ -460,13 +479,15 @@ add_filter( 'document_title_separator', 'wp_document_title_separator' );
 
 function wp_document_title_parts( $title ) {
   if ( is_home() || is_front_page() ) {
-    unset( $title['tagline'] ); // キャッチフレーズを出力しない
+     
   } else if ( is_category() ) {
     $title['title'] = '「' . $title['title'] . '」カテゴリーの記事一覧';
   } else if ( is_tag() ) {
     $title['title'] = '「' . $title['title'] . '」タグの記事一覧';
   } else if ( is_archive() ) {
     $title['title'] = $title['title'] . 'の記事一覧';
+  } else if ( is_singular() ) {
+    $title['site'] = $title['site'] . ' | ' . get_bloginfo( 'description' );
   }
   return $title;
 }
