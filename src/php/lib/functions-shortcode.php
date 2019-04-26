@@ -21,6 +21,10 @@ function getBaseGymData($atts) {
     if( $entry_post_type === 'studio' ) {
       $afilink = get_post_meta( $post_id, 'aficode', true );
       $afilink = '<p class="gym-content__btn">' . $afilink . '</p>';
+      if( get_option( 'diet-concierge' ) && get_post_meta( $post_id, 'cash-back', true ) === '1' ) {
+        $cash_back_link = '<p class="cash-back-link">' . get_option( 'diet-concierge' ) . "</p>";
+        $afilink = $cash_back_link . $afilink;
+      }
       $content .= $afilink;
     }
     return apply_filters( 'the_content', $content );
@@ -270,20 +274,20 @@ function getGymByRegion($atts) {
       $duplication = $meta_values === $prev_meta_value; // bool
 
       //おすすめジムかの判定
-      $is_pickup = get_post_meta($post_base_id, 'pickup', true);
-      if( $is_pickup && !$duplication ) {
-        $pickup_contents .= '<div class="pickup-gym-this-area__item">';
-        $pickup_contents .= '<div class="gym-content__thumb gym-content__thumb--pickup"><a href="' . $details_link . '"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></a></div>';
-        $pickup_contents .= '<p>' . $title . '</p>';
-        $pickup_contents .= '<p class="pickup-gym-this-area__btn">' . $aficode . '</p>';
-        $pickup_contents .= '</div>';
-      } 
+
 
       $content .= !$duplication ? '<div class="gym-content">' : '<div class="gym-content gym-content--duplication">' ; // 前回と同じジムだったらクラスを付与
       $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
       $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
       if( $duplication ) $content .= '<p class="gym-content__text-same">※ジムの内容は上の店舗と同じ</p>';
       $content .= $content_text;
+
+      // ダイエットコンシェルジュへのリンクを入れる
+      if( get_option( 'diet-concierge' ) && get_post_meta( $post_base_id, 'cash-back', true ) === '1' ) {
+        $cash_back_link = '<p class="cash-back-link">' . get_option( 'diet-concierge' ) . "</p>";
+        $content .= $cash_back_link;
+      }
+
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
       $content .= '<p class="gym-content__detail"><a href="' . $details_link . '">ジム情報を見る</a></p>';
       $content .= '</div>';
@@ -295,12 +299,6 @@ function getGymByRegion($atts) {
 
     $hit_count_text = '<p class="hit-count">' . $hit_count .'件のジムがヒットしました。</p>';
     $content = $hit_count_text . $content;
-    
-    if( false ) {
-      $pickup_text = '<h2>このエリアのおすすめジム（一回当たり安い順）</h2>';
-      $pickup_text .= '<div class="pickup-gym-this-area">' . $pickup_contents . '</div><h2>トレーニング一回当たりが安い順（全件）</h2>';
-      $content = $pickup_text . $content;
-    } 
   }
 
   // 上書きされた$postを元に戻す

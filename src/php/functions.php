@@ -4,6 +4,7 @@ require_once( 'lib/functions-shortcode.php' );
 require_once( 'lib/functions-widget.php' );
 require_once( 'lib/functions-edit.php' );
 require_once( 'lib/functions-search-details.php' );
+require_once( 'lib/functions-customizer.php' );
 
 add_theme_support( 'post-thumbnails' );
 add_theme_support( 'excerpt' );
@@ -214,15 +215,13 @@ add_action( 'comment_post', 'save_comment_meta_data_kuchikomi' );
  * 口コミ情報を表示する
  ======================================================*/
 // 表示するためのコード
-function attach_sex_to_author( $author ) {
-  /*
-    get_comment_meta(コメントID,コメントメタ情報のキー名,bool)
-    bool=> 同じキー名がある場合、最初に見つかった値を取得する場合はtrue、すべての値を配列で取得する場合はfalseを指定
-  */
+/*function attach_sex_to_author( $author ) {
+
   $sexies = get_comment_meta( get_comment_ID(), 'sex', false );
   $stars = get_comment_meta( get_comment_ID(), 'star', false );
+  var_dump( $sexies );
   $author = '<p class="author-name">' . $author . '</p>';
-  /* false なので配列 */
+
   if ( $sexies ) {
     foreach ($sexies as $sex)
       $author .= '<p class="author-sex">' . $sex . '</p> ';
@@ -233,7 +232,7 @@ function attach_sex_to_author( $author ) {
   }
   return $author;
 }
-add_filter( 'get_comment_author_link', 'attach_sex_to_author' );
+add_filter( 'get_comment_author_link', 'attach_sex_to_author' );*/
 
 function get_review_comment() {
   $post_id =  get_the_ID();
@@ -367,63 +366,6 @@ function get_gym_region() {
   wp_reset_postdata();
   echo $content;
 }
-
-/**
- * 外観→カスタマイズの設定
- */
-function theme_customizer_extension($wp_customize) {
-  //セクション
-  $wp_customize->add_section( 'access-tag', array (
-   'title' => 'アクセス解析タグ',
-   'priority' => 100,
-  ));
-    //テーマ設定
-    $wp_customize->add_setting( 'analytics', array (
-      'type' => 'option'
-    ));
-     //コントロールの追加
-    $wp_customize->add_control( 'analytics', array(
-      'section' => 'access-tag',
-      'settings' => 'analytics',
-      'label' =>'アクセス解析タグの挿入',
-      'description' => 'googleアナリティクスのIDを入力してください。<br>UA-xxxxxxxxxx-xxの部分のみ',
-      'type' => 'textarea',
-      'priority' => 20,
-    ));
-    //テーマ設定
-    $wp_customize->add_setting( 'search-console', array (
-      'type' => 'option'
-    ));
-     //コントロールの追加
-    $wp_customize->add_control( 'search-console', array(
-      'section' => 'access-tag',
-      'settings' => 'search-console',
-      'label' =>'アクセス解析タグの挿入',
-      'description' => 'search consoleのタグを入力してください。<br>content="ここの部分"',
-      'type' => 'textarea',
-      'priority' => 20,
-    ));
-
-  //セクション
-  $wp_customize->add_section( 'settings_seo', array (
-   'title' => 'SEOの設定',
-   'priority' => 100,
-  ));
-    //テーマ設定
-    $wp_customize->add_setting( 'meta_description', array (
-      'type' => 'option'
-    ));
-     //コントロールの追加
-    $wp_customize->add_control( 'meta_description', array(
-      'section' => 'settings_seo',
-      'settings' => 'meta_description',
-      'label' =>'トップページのmeta description',
-      'description' => 'トップページのmeta descriptionを設定してください。',
-      'type' => 'textarea',
-      'priority' => 30,
-    ));
-}
-add_action('customize_register', 'theme_customizer_extension');
 
 /**
  * feedの設定
