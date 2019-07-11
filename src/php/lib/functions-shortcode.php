@@ -13,15 +13,23 @@ function getBaseGymData($atts) {
   global $entry_post_type;
 
   if( isset( $gym_slug ) ) {
-    $post_id = get_page_by_path($gym_slug, "OBJECT", "gym");
-    $post_id = $post_id->ID;
-    $content = get_post_field( 'post_content', $post_id );
+    
+    $base_post_data = get_page_by_path( $gym_slug, "OBJECT", "gym" );
+    $base_post_id = $base_post_data->ID;
+    $content = get_post_field( 'post_content', $base_post_id );
     $content = '<div class="gym-common-data">' . $content . '</div>';
     $content = do_shortcode($content);
+
     if( $entry_post_type === 'studio' ) {
+      $post_id = get_the_ID();
       $afilink = get_post_meta( $post_id, 'aficode', true );
+
+      if( empty( $afilink ) ) {
+        $afilink = get_post_meta( $base_post_id, 'aficode', true );
+      }
+      
       $afilink = '<p class="gym-content__btn">' . $afilink . '</p>';
-      if( get_option( 'diet-concierge' ) && get_post_meta( $post_id, 'cash-back', true ) === '1' ) {
+      if( get_option( 'diet-concierge' ) && get_post_meta( $base_post_id, 'cash-back', true ) === '1' ) {
         $cash_back_link = '<p class="cash-back-link">' . get_option( 'diet-concierge' ) . "</p>";
         $afilink = $cash_back_link . $afilink;
       }
@@ -206,7 +214,12 @@ function get_studio_lines($atts){
       $meta_values = get_post_meta($post_id, 'base_gym', true);
       $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
       $post_base_id = $post_base_obj->ID;
-      $aficode = get_post_meta($post_base_id, 'aficode', true);
+
+      $aficode = get_post_meta( $post_id, 'aficode', true );
+
+      if( empty( $aficode ) ) {
+        $aficode = get_post_meta( $post_base_id, 'aficode', true );
+      }
 
       $content .= '<div class="gym-content">';
       $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
@@ -247,6 +260,9 @@ function getGymByRegion($atts) {
       'relation' => 'AND'
     )
   );
+  $inner_adsense = get_option( 'adsense-inner' );
+  $diet_concierge = get_option( 'diet-concierge' );
+
   $my_query = new WP_Query($args);
   $count = 0;
   $hit_count = 0;
@@ -258,7 +274,7 @@ function getGymByRegion($atts) {
     while ( $my_query->have_posts() ) {
       $my_query->the_post();
       $post_id = $my_query->posts[$count]->ID;
-      $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
+      
       $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
       // タイトル
       $title = $my_query->posts[$count]->post_title;
@@ -268,14 +284,18 @@ function getGymByRegion($atts) {
       $meta_values = get_post_meta($post_id, 'base_gym', true);
       $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
       $post_base_id = $post_base_obj->ID;
+      // ベースとなるジムのサムネイル
+      $post_thumbnail_url = get_the_post_thumbnail_url( $post_base_id, 'full' );
       // ベースとなるジムのアフィコードを取得
-      $aficode = get_post_meta($post_base_id, 'aficode', true);
+      $aficode = get_post_meta( $post_id, 'aficode', true );
+
+      if( empty( $aficode ) ) {
+        $aficode = get_post_meta( $post_base_id, 'aficode', true );
+      }
       // 前回と同じジムかの判定
       $duplication = $meta_values === $prev_meta_value; // bool
 
       //おすすめジムかの判定
-
-
       $content .= !$duplication ? '<div class="gym-content">' : '<div class="gym-content gym-content--duplication">' ; // 前回と同じジムだったらクラスを付与
       $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
       $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
@@ -283,7 +303,7 @@ function getGymByRegion($atts) {
       $content .= $content_text;
 
       // ダイエットコンシェルジュへのリンクを入れる
-      if( get_option( 'diet-concierge' ) && get_post_meta( $post_base_id, 'cash-back', true ) === '1' ) {
+      if( !empty( $diet_concierge ) && get_post_meta( $post_base_id, 'cash-back', true ) === '1' ) {
         $cash_back_link = '<p class="cash-back-link">' . get_option( 'diet-concierge' ) . "</p>";
         $content .= $cash_back_link;
       }
@@ -291,6 +311,10 @@ function getGymByRegion($atts) {
       if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
       $content .= '<p class="gym-content__detail"><a href="' . $details_link . '">ジム情報を見る</a></p>';
       $content .= '</div>';
+
+      if( !empty( $inner_adsense ) && $count % 3 === 0 ) {
+        $content .= '<div class="inner-adsense">' . $inner_adsense . '</div>';
+      }
       $count++;
       $hit_count++;
 
@@ -364,12 +388,78 @@ function getGymByPrefecture($atts) {
       $count++;
     }
   }
+
   // 上書きされた$postを元に戻す
   wp_reset_postdata();
   return do_shortcode( $content );
 
 }
 add_shortcode('prefecture', 'getGymByPrefecture');
+
+
+/**
+ * 都道府県のジムを取得
+ */
+function getGymBytodofuken($atts) {
+
+  $content = '';
+  $key = $atts["name"];
+
+  $args = array(
+    'post_type'        => 'todofuken',
+    'posts_per_page'   => -1,
+    'orderby'          => 'meta_value_num',
+    'order'            => 'ASC',
+    'meta_key' => 'price_per',
+    'meta_query' => array(
+      array(
+        'key' => 'todofuken',
+        'value' => $key,
+        'compare'=>'=',
+      ),
+      'relation' => 'AND'
+    )
+  );
+  $my_query = new WP_Query($args);
+  $count = 0;
+  $hit_count = 0;
+  
+  if ( $my_query->have_posts() ) {
+    while ( $my_query->have_posts() ) {
+      $my_query->the_post();
+      $post_id = $my_query->posts[$count]->ID;
+
+      $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
+      $title = $my_query->posts[$count]->post_title;
+      
+      // ベースのジム情報のidを取得
+      $meta_values = get_post_meta($post_id, 'base_gym', true);
+      $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
+      $post_base_id = $post_base_obj->ID;
+
+      // ベースとなるジムのアフィコードを取得
+      $aficode = get_post_meta($post_base_id, 'aficode', true);
+      // ベースとなるジムのサムネイル
+      $post_thumbnail_url = get_the_post_thumbnail_url( $post_base_id, 'full' );
+
+      $content .= '<div class="gym-content">';
+      $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
+      $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
+      $content .= $content_text;
+      if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
+      $content .= '</div>';
+      $count++;
+      $hit_count++;
+    }
+    $hit_count_text = '<p class="hit-count">' . $hit_count .'件のジムがヒットしました。</p>';
+    $content = $hit_count_text . $content;
+  }
+  // 上書きされた$postを元に戻す
+  wp_reset_postdata();
+  return do_shortcode( $content );
+
+}
+add_shortcode('todofuken', 'getGymBytodofuken');
 
 /**
  * 都道府県と女性限定・おすすめのジムを取得
@@ -582,7 +672,11 @@ function get_gym_available_credit_by_area($atts) {
       $title = $my_query->posts[$count]->post_title;
 
       // ベースとなるジムのアフィコードを取得
-      $aficode = get_post_meta($post_base_id, 'aficode', true);
+      $aficode = get_post_meta( $post_id, 'aficode', true );
+
+      if( empty( $aficode ) ) {
+        $aficode = get_post_meta( $post_base_id, 'aficode', true );
+      }
       
       $content .= !$duplication ? '<div class="gym-content">' : '<div class="gym-content gym-content--duplication">' ;
       $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
@@ -729,7 +823,11 @@ function get_gym_by_feature2($atts) {
       $title = $my_query->posts[$count]->post_title;
 
       // ベースとなるジムのアフィコードを取得
-      $aficode = get_post_meta($post_base_id, 'aficode', true);
+      $aficode = get_post_meta( $post_id, 'aficode', true );
+
+      if( empty( $aficode ) ) {
+        $aficode = get_post_meta( $post_base_id, 'aficode', true );
+      }
       
       $content .= !$duplication ? '<div class="gym-content">' : '<div class="gym-content gym-content--duplication">' ;
       $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
@@ -803,7 +901,7 @@ function only_show_post_type( $atts, $content='' ) {
   global $entry_post_type;
   $key = $atts["type"];
   if( $content && $key === $entry_post_type ) {
-    return $content;
+    return do_shortcode($content);
   }
 }
 add_shortcode('posttype', 'only_show_post_type');
@@ -814,12 +912,23 @@ add_shortcode('posttype', 'only_show_post_type');
 function get_aficode_studio_page() {
   global $entry_post_type;
 
-  if( $entry_post_type !== 'studio' ) return;
-  // 店舗からジムのIDを取得する
-  $meta_values = get_post_meta( get_the_ID(), 'base_gym', true );
-  $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
-  $post_base_id = $post_base_obj->ID;
-  $afilink = get_post_meta($post_base_id, 'aficode', true);
+  if( $entry_post_type === 'studio' ) {
+    // 店舗からジムのIDを取得する
+    $post_id = get_the_ID();
+    $meta_values = get_post_meta( $post_id, 'base_gym', true );
+    $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
+    $post_base_id = $post_base_obj->ID;
+
+    $afilink = get_post_meta( $post_id, 'aficode', true );
+
+    if( empty( $afilink ) ) {
+      $afilink = get_post_meta( $post_base_id, 'aficode', true );
+    }
+  } elseif ( $entry_post_type === 'gym' ) {
+    $afilink = get_post_meta( get_the_ID(), 'aficode', true );
+  } else {
+    return;
+  }
 
   return '<p class="gym-content__btn">' . $afilink . '</p>';
 }
@@ -830,7 +939,7 @@ function gym_service_list() {
 
   $post_id = get_the_ID();
 
-  if(get_post_type() === 'studio') {
+  if( get_post_type() === 'studio' || get_post_type() === 'todofuken' ) {
     $custom_fields = get_post_custom( $post_id );
     $parent_slug = $custom_fields['base_gym'][0];
     $post_id = get_page_by_path($parent_slug, OBJECT, "gym");
@@ -873,3 +982,26 @@ function get_kanren_article ($atts) {
   return '<p><a href="' . $post_url . '">' . $post_title . '</a></p>';
 }
 add_shortcode( 'kanren', 'get_kanren_article' );
+
+
+//ショートコード追加
+function display_my_menu_shorcode( $atts ) {
+  $nav_id = $atts["id"];
+  $nav_obj = wp_get_nav_menu_items( $nav_id );
+
+  if( !$nav_obj ) return;
+
+  $html = '';
+  $html .= '<ul class="area-nav-child__list area-nav-child__list--post">';
+
+  foreach( $nav_obj as $nav_item ) {
+    $nav_url = $nav_item->url;
+    $nav_title = $nav_item->title;
+    $html .= '<li class="menu-item"><a href="' . $nav_url . '">' . $nav_title . '</a></li>';
+  }
+  $html .= '</ul>';
+
+  return $html;
+}
+add_shortcode('nav', 'display_my_menu_shorcode');
+

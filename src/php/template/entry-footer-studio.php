@@ -9,7 +9,7 @@
       $get_num = 0;
 
       if( $region ) {
-        echo '<h3>このジムが掲載されている記事</h3>';
+        echo '<h3>このエリアの記事</h3>';
         echo '<div class="area-article">';
         foreach($region as $item) {
           $count = 0;
@@ -47,9 +47,10 @@
     <h3 class="near-studio__heading">同じエリアのジム一覧</h3>
     <div class="near-studio">
       <?php // 近くのジムを検索
-      
+
       $count = 0;
       $args = array(
+        'post__not_in'    => array( get_the_ID() ),
         'post_type'       => 'studio',
         'posts_per_page'  => 8,
         'orderby'        => 'rand',
@@ -63,7 +64,13 @@
         while ( $my_query->have_posts() ) {
           $my_query->the_post();
           $post_id = $my_query->posts[$count]->ID;
-          if( !$post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' ) ) {
+
+          // ベースのジム情報のidを取得
+          $meta_values = get_post_meta($post_id, 'base_gym', true);
+          $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
+          $post_base_id = $post_base_obj->ID;
+
+          if( !$post_thumbnail_url = get_the_post_thumbnail_url( $post_base_id, 'full' ) ) {
             $post_thumbnail_url = get_template_directory_uri() . '/image/no-image.jpg';
           }
           $content = '<div class="near-studio__item"><a href="' . get_the_permalink() . '">';

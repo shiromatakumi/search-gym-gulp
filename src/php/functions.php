@@ -95,6 +95,21 @@ function create_post_type() {
       ), //編集画面で使用するフィールド
     )
   );
+  register_post_type( "todofuken", // 投稿タイプ名の定義
+    array(
+      "labels" => array(
+          "name" => __( "都道府県別" ), // 表示する投稿タイプ名
+          "singular_name" => __( "都道府県別" )
+        ),
+      "public" => true,
+      "menu_position" =>5,
+      'supports' => array(
+        'title',
+        'editor',
+        'custom-fields',
+      ), //編集画面で使用するフィールド
+    )
+  );
   register_post_type( "line", // 投稿タイプ名の定義
     array(
       "labels" => array(
@@ -429,7 +444,11 @@ function wp_document_title_parts( $title ) {
   } else if ( is_archive() ) {
     $title['title'] = $title['title'] . 'の記事一覧';
   } else if ( is_singular() ) {
-    $title['site'] = $title['site'] . ' | ' . get_bloginfo( 'description' );
+    if( get_post_type() === 'studio' ) {
+      $title['title'] = $title['title'] . 'のコース・料金・アクセス情報';
+    } else {
+      $title['site'] = $title['site'] . ' | ' . get_bloginfo( 'description' );
+    }
   }
   return $title;
 }

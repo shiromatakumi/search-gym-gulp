@@ -26,6 +26,6 @@ $post_id = get_the_ID();
 <meta name="description" content="<?php echo $blog_description; ?>">
 <?php endif; ?>
 <?php $post_type = get_post_type($post_id); ?>
-<?php if($post_type === 'template' || $post_type === 'gym'):  ?>
+<?php if($post_type === 'template' || $post_type === 'gym' || $post_type === 'todofuken' ):  ?>
 <meta name="robots" content="noindex,nofollow">
 <?php endif; ?>

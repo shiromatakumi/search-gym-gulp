@@ -20,16 +20,14 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', '<?php echo $analytics_tag; ?>');
+  gtag('config', '<?php echo $analytics_tag; ?>', {
+    'optimize_id': 'GTM-56FK7VK'
+  });
 </script>
 <?php endif ?>
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({
-          google_ad_client: "ca-pub-4005490798475990",
-          enable_page_level_ads: true
-     });
-</script>
+<?php if ( $insert_head = get_option( 'insert-head' ) ): ?>
+<?php echo $insert_head; ?>
+<?php endif; ?>
 </head>
 <body <?php body_class(); ?>>
   <div class="container">

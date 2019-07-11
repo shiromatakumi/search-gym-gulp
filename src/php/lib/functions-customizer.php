@@ -23,6 +23,39 @@ function theme_customizer_extension($wp_customize) {
     ));
 
   //セクション
+  $wp_customize->add_section( 'adsense-section', array (
+   'title' => 'アドセンス関連',
+   'priority' => 100,
+  ));
+    //テーマ設定
+    $wp_customize->add_setting( 'adsense-inner', array (
+      'type' => 'option'
+    ));
+     //コントロールの追加
+    $wp_customize->add_control( 'adsense-inner', array(
+      'section' => 'adsense-section',
+      'settings' => 'adsense-inner',
+      'label' =>'記事中アドセンス',
+      'description' => '記事中に自動表示させるアドセンス',
+      'type' => 'textarea',
+      'priority' => 20,
+    ));
+
+    //テーマ設定
+    $wp_customize->add_setting( 'adsense-entries', array (
+      'type' => 'option'
+    ));
+     //コントロールの追加
+    $wp_customize->add_control( 'adsense-entries', array(
+      'section' => 'adsense-section',
+      'settings' => 'adsense-entries',
+      'label' =>'記事一覧アドセンス',
+      'description' => '記事一覧に自動表示させるアドセンス',
+      'type' => 'textarea',
+      'priority' => 20,
+    ));
+
+  //セクション
   $wp_customize->add_section( 'access-tag', array (
    'title' => 'アクセス解析タグ',
    'priority' => 100,
@@ -50,6 +83,18 @@ function theme_customizer_extension($wp_customize) {
       'settings' => 'search-console',
       'label' =>'アクセス解析タグの挿入',
       'description' => 'search consoleのタグを入力してください。<br>content="ここの部分"',
+      'type' => 'textarea',
+      'priority' => 20,
+    ));
+    //headに要素を追加
+    $wp_customize->add_setting( 'insert-head', array (
+      'type' => 'option'
+    ));
+     //コントロールの追加
+    $wp_customize->add_control( 'insert-head', array(
+      'section' => 'access-tag',
+      'settings' => 'insert-head',
+      'label' =>'headに要素を追加',
       'type' => 'textarea',
       'priority' => 20,
     ));

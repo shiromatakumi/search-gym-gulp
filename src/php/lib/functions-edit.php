@@ -18,6 +18,7 @@ if(!function_exists( 'gym_add_quick_tag' )) {
                  '<tr>\n<td class="gym-table__td-1">回数</td>\n<td></td>\n</tr>\n' .
                  '<tr>\n<td class="gym-table__td-1">時間</td>\n<td></td>\n</tr>\n' .
                  '</table>\n</div>';
+    $gym_studio_info = '<div class="gym-table-wrap">\n<table class="gym-table">\n<tr>\n<th colspan="2">店</th>\n</tr>\n<tr>\n<td class="gym-table__td-1">住所</td>\n<td></td>\n</tr>\n<tr>\n<td class="gym-table__td-1">最寄駅</td>\n<td></td>\n</tr>\n</table>\n</div>\n';
     if (wp_script_is('quicktags')){?>
       <script>
         QTags.addButton('qt-link','枠で囲んだリンク','<p class="gym-content__link"></p>');
@@ -32,6 +33,9 @@ if(!function_exists( 'gym_add_quick_tag' )) {
         QTags.addButton('qt-feature-prefecture','都道府県と特徴', '[feature feature="" prefecture=""]');
         QTags.addButton('qt-region-prefecture','エリアと特徴', '[feature2 feature="" region=""]');
         QTags.addButton('qt-get-temp','テンプレート呼び出し', '[temp slug=""]');
+        QTags.addButton('qt-list-title','タイトル付きのリスト', '<ul class="list-title" title="タイトル">\n<li>アイテム</li>\n</ul>');
+        QTags.addButton('qt-list-title-studio','タイトル付きの店舗リスト', '<ul class="list-title list-title--studio" title="タイトル">\n<li>アイテム</li>\n</ul>');
+        QTags.addButton('qt-table-studio-info','店舗情報テーブル', '<?php echo $gym_studio_info; ?>');
       </script>
     <?php }
   }
@@ -104,6 +108,7 @@ add_action('save_post', 'update_studio_price_2');
 function add_aficode_fields() {
   //add_meta_box(表示される入力ボックスのHTMLのID, ラベル, 表示する内容を作成する関数名, 投稿タイプ, 表示方法)
   add_meta_box( 'aficode', 'アフィリエイトコード', 'insert_aficode_fields', 'gym', 'normal');
+  add_meta_box( 'aficode', 'アフィリエイトコード', 'insert_aficode_fields', 'studio', 'normal');
 }
 add_action('admin_menu', 'add_aficode_fields');
 
