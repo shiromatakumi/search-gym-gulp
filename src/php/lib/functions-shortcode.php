@@ -29,7 +29,8 @@ function getBaseGymData($atts) {
       }
       
       $afilink = '<p class="gym-content__btn">' . $afilink . '</p>';
-      if( get_option( 'diet-concierge' ) && get_post_meta( $base_post_id, 'cash-back', true ) === '1' ) {
+
+      if( get_option( 'diet-concierge' ) && !empty( get_post_meta( $base_post_id, 'cash-back', true ) ) ) {
         $cash_back_link = '<p class="cash-back-link">' . get_option( 'diet-concierge' ) . "</p>";
         $afilink = $cash_back_link . $afilink;
       }
@@ -303,7 +304,7 @@ function getGymByRegion($atts) {
       $content .= $content_text;
 
       // ダイエットコンシェルジュへのリンクを入れる
-      if( !empty( $diet_concierge ) && get_post_meta( $post_base_id, 'cash-back', true ) === '1' ) {
+      if( !empty( $diet_concierge ) && !empty( get_post_meta( $post_base_id, 'cash-back', true ) ) ) {
         $cash_back_link = '<p class="cash-back-link">' . get_option( 'diet-concierge' ) . "</p>";
         $content .= $cash_back_link;
       }
@@ -489,6 +490,16 @@ function getGymForWoman($atts) {
         'value' => '1',
         'compare'=>'=',
       ),
+      array(
+        'key' => 'woman-only',
+        'value' => '2',
+        'compare'=>'='
+      ),
+      array(
+        'key' => 'woman-osusume',
+        'value' => '2',
+        'compare'=>'=',
+      ),
       'relation' => 'OR'
     ),
     'relation' => 'AND'
@@ -518,6 +529,8 @@ function getGymForWoman($atts) {
       $my_query->the_post();
       $post_id = $my_query->posts[$count]->ID;
       $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
+      if ( !$post_thumbnail_url ) $post_thumbnail_url = get_the_post_thumbnail_url( $post_base_id, 'full' );
+      
       $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
       $title = $my_query->posts[$count]->post_title;
       // ベースとなるジムのアフィコードを取得
@@ -563,8 +576,18 @@ function get_gym_available_credit($atts) {
         'compare'=>'='
       ),
       array(
+        'key' => 'credit-card',
+        'value' => '2',
+        'compare'=>'='
+      ),
+      array(
         'key' => 'installment-payment',
         'value' => '1',
+        'compare'=>'=',
+      ),
+      array(
+        'key' => 'installment-payment',
+        'value' => '2',
         'compare'=>'=',
       ),
       'relation' => 'OR'
@@ -660,7 +683,7 @@ function get_gym_available_credit_by_area($atts) {
       $credit_value = get_post_meta($post_base_id, 'credit-card', true);
       $installment_payment_value = get_post_meta($post_base_id, 'installment-payment', true);
 
-      if( $credit_value !== '1' && $installment_payment_value !== '1' ) {
+      if( !empty( $credit_value ) && !empty( $installment_payment_value ) ) {
         $count++;
         continue; //特徴が該当しなければ表示しない
       }
@@ -668,6 +691,9 @@ function get_gym_available_credit_by_area($atts) {
       
 
       $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
+
+      if ( !$post_thumbnail_url ) $post_thumbnail_url = get_the_post_thumbnail_url( $post_base_id, 'full' );
+
       $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
       $title = $my_query->posts[$count]->post_title;
 
@@ -718,9 +744,17 @@ function get_gym_by_feature($atts) {
       'compare'=>'=',
     ),
     array(
-      'key' => $feature,
-      'value' => '1',
-      'compare'=>'='
+      array(
+        'key' => $feature,
+        'value' => '1',
+        'compare'=>'='
+      ),
+      array(
+        'key' => $feature,
+        'value' => '2',
+        'compare'=>'='
+      ),
+      'relation' => 'OR',
     ),
     'relation' => 'AND'
   );
@@ -812,13 +846,16 @@ function get_gym_by_feature2($atts) {
 
       $feature_value = get_post_meta($post_base_id, $feature, true);
 
-      if( $feature_value !== '1') {
+      if( !empty( $feature_value ) ) {
         $count++;
         continue; //特徴が該当しなければ表示しない
       }
       $duplication = $meta_values === $prev_meta_value; // bool
 
       $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
+
+      if ( !$post_thumbnail_url ) $post_thumbnail_url = get_the_post_thumbnail_url( $post_base_id, 'full' );
+
       $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
       $title = $my_query->posts[$count]->post_title;
 
@@ -847,25 +884,6 @@ function get_gym_by_feature2($atts) {
   return do_shortcode( $content );
 }
 add_shortcode('feature2', 'get_gym_by_feature2');
-
-/*
-
-
-      $duplication = $meta_values === $prev_meta_value; // bool
-
-      $content .= !$duplication ? '<div class="gym-content">' : '<div class="gym-content gym-content--duplication">' ;
-      $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
-      $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
-      if( $duplication ) $content .= '<p class="gym-content__text-same">※ジムの内容は上の店舗と同じ</p>';
-      $content .= $content_text;
-      if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
-      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">ジム情報を見る</a></p>';
-      $content .= '</div>';
-      $count++;
-      $hit_count++;
-
-      $prev_meta_value = $meta_values;
-*/
 
 /**
  *  Google Mapの埋め込み用
@@ -939,23 +957,16 @@ function gym_service_list() {
 
   $post_id = get_the_ID();
 
-  if( get_post_type() === 'studio' || get_post_type() === 'todofuken' ) {
-    $custom_fields = get_post_custom( $post_id );
-    $parent_slug = $custom_fields['base_gym'][0];
-    $post_id = get_page_by_path($parent_slug, OBJECT, "gym");
-    $post_id = $post_id->ID;
-  }
-
   $content = '<ul class="service__list">';
   $custom_fields = get_post_custom( $post_id );
-  if( isset( $custom_fields['pickup'] ) && $custom_fields['pickup'][0] === '1' ) $content .= '<li class="service__item service__item--osusume">おすすめジム</li>';
-  if( isset( $custom_fields['woman-only'] ) && $custom_fields['woman-only'][0] === '1' ) $content .= '<li class="service__item service__item--woman">女性限定</li>';
-  if( isset( $custom_fields['woman-osusume'] ) && $custom_fields['woman-osusume'][0] === '1' ) $content .= '<li class="service__item service__item--woman-osusume">女性におすすめ</li>';
-  if( isset( $custom_fields['teaching-meals'] ) && $custom_fields['teaching-meals'][0] === '1' ) $content .= '<li class="service__item">食事指導</li>';
-  if( isset( $custom_fields['private-room'] ) && $custom_fields['private-room'][0] === '1' ) $content .= '<li class="service__item">完全個室</li>';
-  if( isset( $custom_fields['credit-card'] ) && $custom_fields['credit-card'][0] === '1' ) $content .= '<li class="service__item">クレジットOK</li>';
-  if( isset( $custom_fields['installment-payment'] ) && $custom_fields['installment-payment'][0] === '1' ) $content .= '<li class="service__item">分割支払い</li>';
-  if( isset( $custom_fields['repayment'] ) && $custom_fields['repayment'][0] === '1' ) $content .= '<li class="service__item">返金保証あり</li>';
+  if( isset( $custom_fields['pickup'] )              && !empty( $custom_fields['pickup'][0] ) ) $content .= '<li class="service__item service__item--osusume">おすすめジム</li>';
+  if( isset( $custom_fields['woman-only'] )          && !empty( $custom_fields['woman-only'][0] ) ) $content .= '<li class="service__item service__item--woman">女性限定</li>';
+  if( isset( $custom_fields['woman-osusume'] )       && !empty( $custom_fields['woman-osusume'][0] ) ) $content .= '<li class="service__item service__item--woman-osusume">女性におすすめ</li>';
+  if( isset( $custom_fields['teaching-meals'] )      && !empty( $custom_fields['teaching-meals'][0] ) ) $content .= '<li class="service__item">食事指導</li>';
+  if( isset( $custom_fields['private-room'] )        && !empty( $custom_fields['private-room'][0] ) ) $content .= '<li class="service__item">完全個室</li>';
+  if( isset( $custom_fields['credit-card'] )         && !empty( $custom_fields['credit-card'][0] ) ) $content .= '<li class="service__item">クレジットOK</li>';
+  if( isset( $custom_fields['installment-payment'] ) && !empty( $custom_fields['installment-payment'][0] ) ) $content .= '<li class="service__item">分割支払い</li>';
+  if( isset( $custom_fields['repayment'] )           && !empty( $custom_fields['repayment'][0] ) ) $content .= '<li class="service__item">返金保証あり</li>';
 
   $content .= '</ul>';
 

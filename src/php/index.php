@@ -3,7 +3,7 @@
       <?php if( is_home() || is_front_page() ): ?>
       <?php if ( $paged < 2 ) : ?>
       <div class="home-top">
-        <div class="home-top-inner" style="background-image:url(<?php echo get_template_directory_uri(); ?>/image/main-visual.jpg);">
+        <div class="home-top-inner" style="background-image:url(<?php echo get_template_directory_uri(); ?>/image/main-visual-2.jpg);">
           <div class="home-top-box">
             <h2 class="home-top-box__title">人気のトレーニングジム検索サイト</h2>
             <?php 
@@ -13,6 +13,7 @@
             <p class="home-top-box__desc">現在の掲載店舗数: <span class="count-tenpo"><?php echo $pages; ?></span>件</p>
             <div class="home-top-box__links">
               <a href="#search-area">エリアから検索する</a>
+              <a href="<?php echo home_url() . '/search-detail/'; ?>">詳細検索</a>
             </div>
           </div>
         </div>
@@ -21,6 +22,17 @@
       <?php endif; ?>
       <div class="wrapper-inner <?php if ( !$paged ) echo 'wrapper-inner--top'; ?>">
         <main id="main" class="main">
+          <div class="widget-toppage-upper">
+            <?php if ( wp_is_mobile() ) : ?>
+            <?php if ( is_active_sidebar( 'toppage-upper-sp' ) ) : ?>
+              <?php dynamic_sidebar( 'toppage-upper-sp' ); ?>
+            <?php endif; ?>
+            <?php else: ?>
+            <?php if ( is_active_sidebar( 'toppage-upper' ) ) : ?>
+              <?php dynamic_sidebar( 'toppage-upper' ); ?>
+            <?php endif; ?>
+            <?php endif; ?>
+          </div>
           <div class="main-inner">
             <?php if( is_home() || is_front_page() ): ?>
             <?php 
@@ -35,6 +47,11 @@
               }
             } ?>
             <?php if ( $paged < 2 ) : ?>
+            <section class="top-section top-section--serach-area" id="search-area">
+              <h3 class="top-section__heading">詳細検索</h3>
+              <p>エリアや特徴など検索条件を指定して、ジムを検索する</p>
+              <p class="link-search-detail"><a href="<?php echo home_url() . '/search-detail/'; ?>">詳細検索</a></p>
+            </section>
             <section class="top-section top-section--serach-area" id="search-area">
               <h3 class="top-section__heading">エリアから探す</h3>
               <div class="area-nav-wrap">

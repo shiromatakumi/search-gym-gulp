@@ -1,4 +1,5 @@
 @import "normalize.scss";
+@import "definition.scss";
 
 html, body {
   margin: 0;
@@ -9,9 +10,10 @@ html, body {
   box-sizing: border-box;
 }
 body {
-      font-family: -apple-system,BlinkMacSystemFont,San Fransisco,Segoe UI,Helvetica Neue,Helvetica,Arial,"游ゴシック Medium",Yu Gothic Medium,"游ゴシック体",YuGothic,Yu Gothic,"メイリオ",Meiryo,MS PGothic,sans-serif;
-  color: #111;
-  line-height: 1.5;
+  font-family: -apple-system,BlinkMacSystemFont,San Fransisco,Segoe UI,Helvetica Neue,Helvetica,Arial,"游ゴシック Medium",Yu Gothic Medium,"游ゴシック体",YuGothic,Yu Gothic,"メイリオ",Meiryo,MS PGothic,sans-serif;
+  color: #333;
+  line-height: 1.6;
+  background-color: #f5f5f5;
 }
 header, footer, nav, section, article, aside {
   display:block;
@@ -37,34 +39,40 @@ table {
 .header {
   width: 100%;
   position: relative;
-  background-color: #111;
-  border-bottom: 2px solid #bd2929;
-  padding: 0 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,.1);
   height: 50px;
+}
+.header-inner {
+  width: 96%;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
 }
 
 .wrapper-inner {
-  width: 92%;
-  max-width: 1100px;
+  width: 96%;
+  max-width: 1200px;
   margin: 40px auto 0;
+  padding-bottom: 40px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
 .main {
-  width: calc(100% - 340px);
+  width: calc(100% - 380px);
 }
 .main-inner {
-  padding: 0 0 40px;
+  padding: 30px;
+  background-color: #fff;
 }
 /**
  * グローバルナビ
  */
 .site-title {
   position: absolute;
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
+  left: 0;
+  top: 13px;
 }
 .site-title__text {
   margin: 0;
@@ -72,13 +80,13 @@ table {
   font-weight: bold;
 }
 .site-title__text a {
-  color: #fff;
+  color: #333;
   text-decoration: none;
 }
 .global-nav-wrap {
   position: absolute;
-  top: 14px;
-  right: 10px;
+  top: 13px;
+  right: 0;
 }
 .global-nav__list {
   list-style: none;
@@ -87,12 +95,32 @@ table {
   display: flex;
 }
 .global-nav__list .menu-item {
-  padding: 0 8px;
+  
 }
 .global-nav__list .menu-item a {
-  color: #fff;
+  display: inline-block;
+  padding: 0 8px 4px;
+  color: #333;
   text-decoration: none;
   font-size: .9rem;
+  font-weight: bold;
+  position: relative;
+  &:before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: #333;
+    transition: all .3s;
+  }
+  &:hover {
+    &:before {
+      left: 0;
+      width: 100%;
+    }
+  }
 }
 /**
  * widget
@@ -105,9 +133,14 @@ table {
   padding: 0;
 }
 .widget ul li {
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+  line-height: 1.4;
   a {
-    color: #111;
+    color: #666;
+    text-decoration: none;
+    &:hover {
+      color: #999;
+    }
   }
 }
 .widget--entry-top-ad,
@@ -119,23 +152,32 @@ table {
  * sidebar
  */
 .sidebar {
-  width: 320px;
+  width: 360px;
+}
+.widget {
+  
+  background-color: #fff;
+}
+.sidebar {
+  .widget {
+    padding: 30px;
+  }
 }
 .widget--sidebar {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
+  
 }
 .widget__title--sidebar {
   text-align: center;
-  padding: 6px 0;
-  border-bottom: 2px solid #bd2929;
-  font-size: 1.2rem;
+  padding: 8px 0;
+  background-color: #f5f5f5;
+  border-bottom: 2px solid #ccc;
+  font-size: 1.1rem;
 }
 
 
 .recommend-gym {
-  padding: 10px;
-  border: 1px solid #ddd;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 .recommend-gym a {
   color: #333;
@@ -151,10 +193,10 @@ table {
 .recommend-gym__detail a {
   display: inline-block;
   background-color: #d05858;
-  background-image: linear-gradient(0deg, #9f1616, #bd2929);
-  padding: 8px 0;
+  background-image: $gradation;
+  padding: 12px 0;
   color: #fff;
-  border-radius: 6px;
+  border-radius: 4px;
   font-size: 1rem;
   text-decoration: none;
   text-align: center;
@@ -164,16 +206,16 @@ table {
 }
 .recommend-gym__detail a:hover {
   background-color: #ab3f3f;
-  background-image: linear-gradient(0deg, #7b1111, #bd2f2f);
+  background-image: $hover_gradation;
 }
 .recommend-gym__detail a:after {
   content: "";
   position: absolute;
   right: 8px;
   top: 50%;
-  margin-top: -6px;
-  border: 6px solid transparent;
-  border-left: 8px solid rgba(255,255,255,.4);
+  margin-top: -4px;
+  border: 4px solid transparent;
+  border-left: 5px solid rgba(255,255,255,.4);
 }
 
 .recommend-gym-list--footer {
@@ -231,21 +273,49 @@ table {
   height: 34px;
   color: #fff;
   background-color: #d05858;
-  background-image: linear-gradient(0deg, #9f1616, #bd2929);
+  background-image: $gradation;
   box-shadow: 2px 2px 2px rgba(0,0,0,.1);
   font-size: 1rem;
-  border-radius: 6px;
+  border-radius: 4px;
   border: none;
   cursor: pointer;
+}
+.nav-footer {
+  &-wrap {
+    background-color: #eee;
+  }
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    list-style: none;
+    margin: 0;
+    padding: 12px 0;
+  }
+  .menu-item {
+    padding: 0 10px;
+    border-right: 1px solid #ccc;
+    font-size: .9rem;
+    &:last-child {
+      border-right: none;
+    }
+    a {
+      color: #333;
+      text-decoration: none;
+      &:hover {
+        color: #999;
+      }
+    }
+  }
 }
 /**
  * footer
  */
 .footer {
   background-color: #111;
-  border-top: 2px solid #bd2929;
+  border-top: 2px solid #d44545;
   color: #fff;
-  padding: 20px 0;
+  padding: 40px 0;
 }
 .footer-inner {
   width: 92%;
@@ -255,7 +325,7 @@ table {
 .copyright__text {
   text-align: center;
   font-size: .8rem;
-  margin-bottom: 0;
+  margin: 0;
 }
 
 
@@ -263,27 +333,28 @@ table {
  * top-page
  */
 .home-top {
-  background-color: #040404;
-  border-bottom: 2px solid #bd2929;
+  background-color: #b4b5b0;
+  // background-image: linear-gradient(90deg, #040404 0%,#040404 60%, #101015 100%);
+  // border-bottom: 2px solid #bd2929;
 }
 .home-top-inner {
-  width: 92%;
-  max-width: 1000px;
+  width: 100%;
   margin: 0 auto;
-  padding: 40px 0;
+  padding: 60px 0;
   background-repeat: no-repeat;
-  background-position: center center;
+  background-position: right center;
   display: flex;
 }
 .home-top-box {
   width: 100%;
   max-width: 600px;
-  background-color: rgba(0,0,0,.6);
+  background-color: rgba(255,255,255,.8);
   padding: 40px;
-  color: #fff;
+  color: #333;
+  margin-left: 16%;
 }
 .home-top-box__title {
-  font-size: 2rem;
+  font-size: 1.4rem;
   margin: 0 0 8px;
 }
 .home-top-box__desc {
@@ -301,23 +372,56 @@ table {
   padding: 0 16px;
   height: 40px;
   line-height: 40px;
-  background-image: linear-gradient(0deg, #9f1616, #bd2929);
+  background-image: $gradation;
   border-radius: 4px;
 }
 .home-top-box__links a:hover {
   opacity: .8;
 }
-
+.link-search-detail {
+  a {
+    color: #fff;
+    text-decoration: none;
+    display: inline-block;
+    padding: 0 16px;
+    height: 40px;
+    line-height: 40px;
+    background-image: $gradation;
+    border-radius: 4px;
+    &:hover {
+      opacity: .8;
+    }
+  }
+}
 /** 
  * top-page main
  */
+.widget--toppage-upper {
+  padding: 30px;
+  margin-bottom: 20px;
+  img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: top;
+  }
+}
 .top-section {
   margin-bottom: 40px;
 }
 .top-section__heading {
   margin-top: 0;
   padding: 6px 0;
-  border-bottom: 2px solid #111;
+  border-bottom: 2px solid #ddd;
+  position: relative;
+  &:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 200px;
+    height: 2px;
+    background-color: #111;
+  }
 }
 .area-nav__list {
   list-style: none;
@@ -327,17 +431,18 @@ table {
 .area-nav__item {
   color: #333;
   padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #eee;
+  border-bottom: 2px solid #eee;
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
   font-weight: bold;
 }
 .area-nav-child__list {
   list-style: none;
   margin-top: 4px;
   border-top: 1px solid #eee;
-  padding: 8px 0 0 18px;
+  padding: 8px 0 0 12px;
   li {
-    padding: 4px;
+    padding: 4px 4px 6px;
     display: inline-block;
     font-weight: normal;
     &:last-child {
@@ -345,6 +450,12 @@ table {
     }
     a {
       color: #333;
+      text-decoration: none;
+      padding-bottom: 2px;
+      border-bottom: 1px solid #e0e0e0;
+      &:hover {
+        color: #999;
+      }
     }
   }
   &--post {
@@ -371,11 +482,11 @@ table {
   justify-content: space-between;
 }
 .entries-article {
-  width: 49%;
-  margin-bottom: 20px;
+  width: 48.6%;
+  margin-bottom: 40px;
 }
 .entries-article .entries-article__link {
-  color: #111;
+  color: #333;
   text-decoration: none;
 }
 
@@ -475,17 +586,28 @@ table {
 }
 .entry-content h2 {
   margin: 50px 0 16px;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   padding: .4em .6em;
-  background-color: #f7f7f7;
-  border-left: 10px solid #bd2929;
+  background-color: #f5f5f5;
+  border-left: 8px solid #333;
 }
 .entry-content .gym-content__title {
   margin-top: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.gym-content {
+  counter-increment: rank;
+  .gym-content__title {
+    &:before {
+      content: counter(rank) "位. ";
+    }
+  }
 }
 .entry-content h3 {
   padding: .4em .6em;
-  background: #f0f0f0;
+  background: #f5f5f5;
   margin: 46px 0 16px;
   font-size: 1.2rem;
 }
@@ -493,14 +615,14 @@ table {
   margin: 42px 0 16px;
   font-size: 1.1rem;
   padding-left: 14px;
-  border-left: 6px solid #111;
+  border-left: 6px solid #333;
 }
 .entry-content h4 {
   margin: 36px 0 16px;
 }
 .entry-content p {
   margin: 0 0 1em;
-  color: #111;
+  color: #333;
 }
 .entry-content img {
   max-width: 100%;
@@ -574,12 +696,11 @@ table {
 	font-size: .9rem;
 }
 .calc-box {
-	border: 2px solid #bd2928;
+	border: 2px solid #d6706f;
 	background-color: #fff8f8;
-	padding: 30px 16px 16px;
-	margin: 2rem 0 20px;
+	padding: 16px;
+	margin: 2.4rem 0 20px;
 	position: relative;
-	border-radius: 4px;
 }
 .calc-box p:last-child {
   margin-bottom: 0;
@@ -587,13 +708,12 @@ table {
 .entry-content .calc-box__title {
   position: absolute;
 	margin: 0;
-	top: -14px;
-	background-color: #bd2928;
+	bottom: 100%;
+	background-color: #d6706f;
 	padding: 2px 8px;
-	left: 16px;
+	left: -2px;
 	color: #fff;
-	font-size: .9rem;
-	border-radius: 6px;
+	font-size: 14px;
 }
 .introduce-trainer {
 	background-color: #f9f9f9;
@@ -633,7 +753,7 @@ table {
 }
 .entry-footer h3 {
   padding: .8em .6em;
-  background: #f0f0f0;
+  background: #f5f5f5;
   font-size: 1.2rem;
 }
 .area-article {
@@ -643,10 +763,8 @@ table {
  * 前テーマから引き継ぎ
  */
 .gym-content {
-  padding: 30px;
-  border: 1px solid #f0f0f0;
+  padding: 30px 0;
   border-bottom: 10px solid #f0f0f0;
-  box-shadow: 0 2px 2px rgba(0,0,0,.2);
   margin-bottom: 20px;
 }
 .gym-content--duplication {
@@ -664,9 +782,10 @@ table {
 }
 .entry-content .gym-content__link {
     position: relative;
-    margin: 1.6em 0 1em;
+    margin: 1.8em 0 1em;
     padding: 0.5em 1em;
-    border: solid 3px #bbb;
+    border: solid 3px #999;
+    background-color: #f9f9f9;
 }
 .entry-content .gym-content__link:before {
     content: "LINK";
@@ -674,15 +793,15 @@ table {
     display: inline-block;
     top: -27px;
     left: -3px;
-    padding: 0 9px;
+    padding: 1px 10px 0;
     height: 25px;
     line-height: 25px;
     vertical-align: middle;
-    font-size: 17px;
-    background: #bbb;
+    font-size: 14px;
+    background: #999;
     color: #ffffff;
     font-weight: bold;
-    border-radius: 5px 5px 0 0;
+    border-radius: 4px 4px 0 0;
 }
 .entry-content .moushikomi-ohayameni {
   margin-bottom: 4px;
@@ -695,8 +814,8 @@ table {
 }
 .entry-content .gym-content__btn a {
   display: inline-block;
-  background-color: #d05858;
-  background-image: linear-gradient(0deg, #9f1616,#bd2929);
+  background-color: #d44545;
+  background-image: $gradation;
   padding: 12px 34px 12px 20px;
   color: #fff;
   border-radius: 4px;
@@ -707,8 +826,8 @@ table {
   box-shadow: 2px 2px 2px rgba(0,0,0,.2);
 }
 .entry-content .gym-content__btn a:hover {
-  background-color: #ab3f3f;
-  background-image: linear-gradient(0deg,#7b1111,#bd2f2f);
+  background-color: #b92b2b;
+  background-image: $hover_gradation;
 }
 .gym-content__btn a:after {
   content: "";
@@ -802,8 +921,9 @@ table {
   display: inline-block;
   height: 30px;
   line-height: 30px;
-  padding: 0 12px;
+  padding: 0 10px;
   margin: 0 6px 6px 0;
+  font-size: .9rem;
 }
 .service__item--osusume {
   color: #fff;
@@ -957,7 +1077,7 @@ table {
 .comment-form select {
   border: 2px solid #ddd;
   background-color: #fff;
-  color: #111;
+  color: #333;
   width: 100%;
   max-width: 500px;
   padding: 6px 4px;
@@ -984,7 +1104,7 @@ table {
   background-image: linear-gradient(0deg, #9f1616, #bd2929);
   border: none;
   font-size: 1rem;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
 }
 .comment-form-star__text {
@@ -1156,19 +1276,42 @@ table {
 /**
  * 詳細検索ページ
  */
-.select-details {
+.search-details {
   margin-bottom: 40px;
+  &__label {
+    display: inline-block;
+    margin: 0 2px 6px 0;
+    padding: 4px 8px;
+    background-color: #f0f0f0;
+    font-size: .94rem;
+  }
+}
+.select-details {
+  margin-bottom: 20px;
+  &__label {
+    display: inline-block;
+    margin: 0 2px 6px 0;
+    padding: 4px 8px;
+    background-color: #f0f0f0;
+    font-size: .94rem;
+  }
+  h4 {
+    margin: .8em 0 .4em;
+  }
+  p {
+    margin: 0 0 .8em;
+  }
 }
 .select-details__title {
   margin: 50px 0 16px;
-  font-size: 1.6rem;
-  padding: .4em .6em;
+  font-size: 1.4rem;
+  padding: .2em .6em;
   background-color: #f7f7f7;
-  border-left: 10px solid #bd2929;
+  border-left: 8px solid #333;
 }
 .area__title {
-  padding: .2em .6em;
-  border-left: 6px solid #bd2929;
+  padding: .1em .6em;
+  border-left: 6px solid #333;
   margin: 46px 0 16px;
   font-size: 1.2rem;
 }
@@ -1183,15 +1326,21 @@ table {
   margin-right: 4px;
   vertical-align: middle;
 }
-.search-detail__submit {
-  width: 120px;
-  height: 34px;
+.search-details__submit-wrap {
+  position: sticky;
+  bottom: 0;
+  padding: 16px 0;
+  background-color: rgba(255,255,255,.9);
+}
+.search-details__submit {
+  width: 140px;
+  height: 40px;
   color: #fff;
   background-color: #d05858;
-  background-image: linear-gradient(0deg, #9f1616, #bd2929);
+  background-image: $gradation;
   box-shadow: 2px 2px 2px rgba(0,0,0,.1);
-  font-size: 1rem;
-  border-radius: 6px;
+  font-size: 1.2rem;
+  border-radius: 4px;
   border: none;
   cursor: pointer;
 }
@@ -1200,7 +1349,41 @@ table {
   color: #ff0000;
   font-weight: bold;
 }
-@media (max-width: 900px) {
+.selected-options {
+  margin-bottom: 40px;
+  padding: 20px;
+  background-color: #fafafa;
+}
+.selected-area {
+  display: inline-block;
+  padding: 0 8px;
+  background-color: #eee;
+  margin-right: 4px;
+}
+.re-search {
+  position: fixed;
+  z-index: 100;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 16px;
+  background-color: rgba(0,0,0,.8);
+  text-align: center;
+  a {
+    background-color: $pink;
+    display: inline-block;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 4px;
+    font-size: 1rem;
+    &:hover {
+      opacity: .8;
+    }
+  }
+}
+
+@media (max-width: 1100px) {
   /* PC small */
   .main {
     width: 100%;
@@ -1208,8 +1391,13 @@ table {
   .sidebar {
     width: 100%;
   }
-  .global-nav-wrap {
-    display: none;
+  .home-top-inner {
+    // background-position: center center;
+  }
+  .home-top-box {
+    width: 94%;
+    margin-left: 3%;
+    background-color: rgba(255,255,255,.8);
   }
   .recommend-gym-list {
     display: flex;
@@ -1229,10 +1417,17 @@ table {
 @media (max-width: 768px) {
   /* tablet */
   .wrapper-inner {
-    width: 96%;
+    width: 100%;
+    margin-top: 0;
   }
   .home-top-box__title {
     font-size: 1.1rem;
+  }
+  .widget--toppage-upper {
+    padding: 20px;
+  }
+  .main-inner {
+    padding: 40px 20px 20px;
   }
   .entries-article__title {
     margin-top: 10px;
@@ -1248,16 +1443,26 @@ table {
     display: none;
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 500px) {
   html {
     font-size: 96%;
   }
+  .main-inner {
+    padding: 40px 16px 16px;
+  }
   /* smartphone */
   .home-top-box {
-    padding: 20px;
+    padding: 32px 24px;
+  }
+  .home-top-inner {
+    width: 100%;
   }
   .gym-content {
-    padding: 16px;
+    padding: 24px 0;
+    .gym-content__title {
+      font-size: 1.3rem;
+      line-height: 1.4;
+    }
   }
   .gym-table .gym-table__td-1 {
     font-size: .8rem;
@@ -1267,6 +1472,11 @@ table {
   }
   .entries-article {
     width: 100%;
+  }
+  .sidebar {
+    .widget {
+      padding: 16px;
+    }
   }
   .recommend-gym {
     width: 100%;

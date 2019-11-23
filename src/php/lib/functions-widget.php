@@ -23,6 +23,24 @@ function theme_widget_settings() {
         'after_title'   => '</h3>',
     ) );
     register_sidebar( array(
+        'name' => 'トップページ上部（PC)',
+        'id' => 'toppage-upper',
+        'description' => 'トップページ上部のウィジェット',
+        'before_widget' => '<div id="%1$s" class="widget widget--toppage-upper %2$s">',
+        'after_widget'  => '</div>',
+        'before_title'  => '<h3 class="widget__title widget__title--toppage-upper">',
+        'after_title'   => '</h3>',
+    ) );
+    register_sidebar( array(
+        'name' => 'トップページ上部（SP）',
+        'id' => 'toppage-upper-sp',
+        'description' => 'トップページ上部のウィジェット',
+        'before_widget' => '<div id="%1$s" class="widget widget--toppage-upper %2$s">',
+        'after_widget'  => '</div>',
+        'before_title'  => '<h3 class="widget__title widget__title--toppage-upper">',
+        'after_title'   => '</h3>',
+    ) );
+    register_sidebar( array(
         'name' => '記事上広告',
         'id' => 'entry-top-ad',
         'description' => '記事上に広告を表示させる',

@@ -29,3 +29,23 @@ $post_id = get_the_ID();
 <?php if($post_type === 'template' || $post_type === 'gym' || $post_type === 'todofuken' ):  ?>
 <meta name="robots" content="noindex,nofollow">
 <?php endif; ?>
+<?php 
+
+if( $post_type === "studio" ) {
+  $base_slug = get_post_meta( $post_id, "base_gym", true );
+
+  if( !empty( $base_slug ) ) {
+    $base_post_object = get_page_by_path( $base_slug, "OBJECT", "gym" );
+    $base_id = $base_post_object->ID;
+
+    $gym_noindex = get_post_meta( $base_id, "noindex_studio", true );
+
+    if ( $gym_noindex === 'noindex' ) {
+?>
+<meta name="robots" content="noindex,nofollow">
+<?php
+    }
+  }
+}
+
+?>

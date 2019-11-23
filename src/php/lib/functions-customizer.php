@@ -100,6 +100,23 @@ function theme_customizer_extension($wp_customize) {
     ));
 
   //セクション
+  $wp_customize->add_section( 'section_search', array (
+   'title' => '検索機能',
+   'priority' => 100,
+  ));
+    //テーマ設定
+    $wp_customize->add_setting( 'setting_search', array (
+      'type' => 'option'
+    ));
+     //コントロールの追加
+    $wp_customize->add_control( 'setting_search', array(
+      'section' => 'section_search',
+      'settings' => 'setting_search',
+      'label' =>'検索機能を使う',
+      'type' => 'checkbox',
+    ));
+
+  //セクション
   $wp_customize->add_section( 'settings_seo', array (
    'title' => 'SEOの設定',
    'priority' => 100,

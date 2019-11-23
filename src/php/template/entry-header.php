@@ -17,20 +17,26 @@
     </div>
   <?php endif; ?>
   <?php 
-    $post_id = $post->ID;
-    // ベースのジム情報のidを取得
-    $meta_values = get_post_meta($post_id, 'base_gym', true);
-    $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
-    $post_base_id = $post_base_obj->ID;
 
-    $post_thumb_url_array = wp_get_attachment_image_src( get_post_thumbnail_id( $post_base_id ), 'large' );
-    $post_thumb = $post_thumb_url_array[0];
+    $post_thumb = '';
+    $post_id = $post->ID;
+    if ( $post_type === 'studio' ) {
+      // ベースのジム情報のidを取得
+      $meta_values = get_post_meta($post_id, 'base_gym', true);
+      $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
+      $post_base_id = $post_base_obj->ID;
+
+      $post_thumb_url_array = wp_get_attachment_image_src( get_post_thumbnail_id( $post_base_id ), 'large' );
+      $post_thumb = $post_thumb_url_array[0];
+    } elseif ( has_post_thumbnail() ) {
+      $post_thumb = get_the_post_thumbnail_url( $post_id, 'full' );
+    }
 
     if( empty( $post_thumb ) ) $post_thumb = get_template_directory_uri() . '/image/' . 'no-image.jpg';
 
   ?>
   <?php if( $post_thumb ): ?>
-    <div class="entry-eyecache"><img src="<?php echo $post_thumb; ?>" alt="<?php the_title(); ?>"></div>
+    <div class="entry-eyecache"><img src="<?php echo $post_thumb; ?>" alt="「<?php the_title(); ?>」のアイキャッチ画像"></div>
   <?php endif; ?>
 
     <?php

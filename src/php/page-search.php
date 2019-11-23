@@ -8,6 +8,8 @@ $is_submitarea = isset( $_GET['area'] );
 
 $search_coditions = array();
 
+$page_url = get_the_permalink();
+
 if( isset( $_GET['woman-only']) ){
   $woman_only = $_GET['woman-only'];
   $search_coditions['woman-only'] = $woman_only;
@@ -72,26 +74,40 @@ if( $is_submitarea ) {
   }
 
   $meta_query_array = array();
+  $meta_query_area_array = array();
+  $meta_query_details_array = array();
 
   foreach( $param_area_array as $region ) {
-    $meta_query_array[] = array(
+    $meta_query_area_array[] = array(
       'key' => 'region',
       'value' => $region,
       'compare'=>'=',
     );
   }
-  if( count( $param_area_array ) > 1 ) $meta_query_array['relation'] = 'OR';
+  foreach( $search_coditions as $key => $value ) {
+    $meta_query_details_array[] = array(
+      'key' => $key,
+      'value' => $value,
+      'compare'=>'=',
+    );
+  }
+  $meta_query_area_array['relation'] = 'OR';
+  $meta_query_details_array['relation'] = 'AND';
+
+  $meta_query_array[] = $meta_query_area_array;
+  $meta_query_array[] = $meta_query_details_array;
+
+  $meta_query_array['relation'] = 'AND';
+  
   
   $args = array(
-    'post_type'        => 'studio',
-    'posts_per_page'   => -1,
-    'orderby'          => 'meta_value_num',
-    'order'            => 'ASC',
-    'meta_key' => 'price_per',
-    'meta_query' => $meta_query_array,
+    'post_type'      => 'studio',
+    'posts_per_page' => -1,
+    'orderby'        => 'meta_value_num',
+    'order'          => 'ASC',
+    'meta_key'       => 'price_per',
+    'meta_query'     => $meta_query_array,
   );
-
-  var_dump( $args );
 
   $my_query = new WP_Query($args);
 
@@ -110,11 +126,36 @@ if( $is_submitarea ) {
       <main id="main" class="main">
         <div class="main-inner">
           <?php if( $is_submitarea ): // 検索結果 ?>
-          <h1 class="entry-title">検索結果（1回あたりの金額が安い順）</h1>
+          <div class="selected-options" id="selected-options">
+            <form action="<?php echo $page_url; ?>" method="get" accept-charset="utf-8">
+              <div class="select-details">
+                <p>選択中のエリア：
+                <?php foreach($param_area_array as $area): ?>
+                <span class="selected-area"><?php echo $area; ?></span>
+                <input type="hidden" name="area" value="<?php echo urlencode($area); ?>">
+                <?php endforeach; ?>
+                </p>
+                <p><a href="<?php echo $page_url; ?>">エリアを変更する</a></p>
+                <h3></h3>
+                <label class="select-details__label"><input type="checkbox" name="woman-only" value="1" class="select-details__checkbox" <?php if( isset( $woman_only ) ) echo 'checked'; ?>>女性限定</label>
+                <label class="select-details__label"><input type="checkbox" name="private-room" value="1" class="select-details__checkbox" <?php if( isset( $private_room ) ) echo 'checked'; ?>>完全個室</label>
+                <label class="select-details__label"><input type="checkbox" name="teaching-meals" value="1" class="select-details__checkbox" <?php if( isset( $teaching_meals ) ) echo 'checked'; ?>>食事指導あり</label>
+                <label class="select-details__label"><input type="checkbox" name="credit-card" value="1" class="select-details__checkbox" <?php if( isset( $credit_card ) ) echo 'checked'; ?>>クレジット払い可</label>
+                <label class="select-details__label"><input type="checkbox" name="installment-payment" value="1" class="select-details__checkbox" <?php if( isset( $installment_payment ) ) echo 'checked'; ?>>分割払い可</label>
+                <label class="select-details__label"><input type="checkbox" name="repayment" value="1" class="select-details__checkbox" <?php if( isset( $repayment ) ) echo 'checked'; ?>>返金制度あり</label>
+                <label class="select-details__label"><input type="checkbox" name="pickup" value="1" class="select-details__checkbox" <?php if( isset( $pickup ) ) echo 'checked'; ?>>おすすめ</label>
+              </div>
+              <input type="submit" name="" value="再検索" class="search-details__submit">
+            </form>
+            
+          </div>
+          
           <div class="search-detail entry-content">
             <?php 
-            if ( $my_query->have_posts() ): 
-              while ( $my_query->have_posts() ):
+            if ( $my_query->have_posts() ): ?>
+            <h1 class="entry-title">検索結果（1回あたりの金額が安い順）</h1>
+            <p class="hit-num"><?php echo $my_query->post_count; ?>件ヒットしました。</p>
+              <?php while ( $my_query->have_posts() ):
               $my_query->the_post();
 
               $post_id = $my_query->posts[$count]->ID;
@@ -143,17 +184,31 @@ if( $is_submitarea ) {
               <?php echo $content_text; ?>
               <?php if( $aficode ) echo '<p class="gym-content__btn">' . $aficode . '</p>'; ?>
             </div>
-            <?php $count++; endwhile; endif; ?>
+            <?php $count++; endwhile; else: ?>
+            <h1 class="gym-content__title">ジムがヒットしませんでした</h1>
+            <p>検索した条件のジムが見つかりませんでした。</p>
+            <p>条件を変更して、再度検索してください。</p>
+            <?php endif; ?>
           </div>
           <?php else: ?>
           <h1 class="entry-title">詳細検索ページ</h1>
           <?php if( $is_after_submit ): ?>
-          <p class="error-msg"><?php echo$error_msg; ?></p>
+          <p class="error-msg"><?php echo $error_msg; ?></p>
           <?php else: ?>
             <p class="error-msg">※エリアの指定は必須です</p>
           <?php endif; ?>
           <div class="search-detail">
-            <form action="" method="get" accept-charset="utf-8">
+            <form action="<?php echo $page_url; ?>" method="get" accept-charset="utf-8">
+              <div class="select-details">
+                <h2 class="select-details__title">詳細条件を選択</h2>
+                <label class="select-details__label"><input type="checkbox" name="woman-only" value="1" class="select-details__checkbox" <?php if( isset( $woman_only ) ) echo 'checked'; ?>>女性限定</label>
+                <label class="select-details__label"><input type="checkbox" name="private-room" value="1" class="select-details__checkbox" <?php if( isset( $private_room ) ) echo 'checked'; ?>>完全個室</label>
+                <label class="select-details__label"><input type="checkbox" name="teaching-meals" value="1" class="select-details__checkbox" <?php if( isset( $teaching_meals ) ) echo 'checked'; ?>>食事指導あり</label>
+                <label class="select-details__label"><input type="checkbox" name="credit-card" value="1" class="select-details__checkbox" <?php if( isset( $credit_card ) ) echo 'checked'; ?>>クレジット払い可</label>
+                <label class="select-details__label"><input type="checkbox" name="installment-payment" value="1" class="select-details__checkbox" <?php if( isset( $installment_payment ) ) echo 'checked'; ?>>分割払い可</label>
+                <label class="select-details__label"><input type="checkbox" name="repayment" value="1" class="select-details__checkbox" <?php if( isset( $repayment ) ) echo 'checked'; ?>>返金制度あり</label>
+                <label class="select-details__label"><input type="checkbox" name="pickup" value="1" class="select-details__checkbox" <?php if( isset( $pickup ) ) echo 'checked'; ?>>おすすめ</label>
+              </div>
               <div class="select-details select-details--area">
                 <h2 class="select-details__title">エリアを選択</h2>
                 <?php foreach( $place_array as $key => $value_array ): ?>
@@ -168,17 +223,9 @@ if( $is_submitarea ) {
                   <?php endforeach; ?>
                 <?php endforeach; ?>
               </div>
-              <div class="select-details">
-                <h2 class="select-details__title">詳細条件を選択</h2>
-                <label class="select-details__label"><input type="checkbox" name="woman-only" value="1" class="select-details__checkbox" <?php if( isset( $woman_only ) ) echo 'checked'; ?>>女性限定</label>
-                <label class="select-details__label"><input type="checkbox" name="private-room" value="1" class="select-details__checkbox" <?php if( isset( $private_room ) ) echo 'checked'; ?>>完全個室</label>
-                <label class="select-details__label"><input type="checkbox" name="teaching-meals" value="1" class="select-details__checkbox" <?php if( isset( $teaching_meals ) ) echo 'checked'; ?>>食事指導あり</label>
-                <label class="select-details__label"><input type="checkbox" name="credit-card" value="1" class="select-details__checkbox" <?php if( isset( $credit_card ) ) echo 'checked'; ?>>クレジット払い可</label>
-                <label class="select-details__label"><input type="checkbox" name="installment-payment" value="1" class="select-details__checkbox" <?php if( isset( $installment_payment ) ) echo 'checked'; ?>>分割払い可</label>
-                <label class="select-details__label"><input type="checkbox" name="repayment" value="1" class="select-details__checkbox" <?php if( isset( $repayment ) ) echo 'checked'; ?>>返金制度あり</label>
-                <label class="select-details__label"><input type="checkbox" name="pickup" value="1" class="select-details__checkbox" <?php if( isset( $pickup ) ) echo 'checked'; ?>>おすすめ</label>
+              <div class="search-details__submit-wrap">
+                <input type="submit" name="" value="検索" class="search-details__submit">
               </div>
-              <input type="submit" name="" value="検索" class="search-detail__submit">
             </form>
           </div>
           <?php endif; ?>
@@ -187,4 +234,9 @@ if( $is_submitarea ) {
       <?php get_sidebar(); ?>
     </div>
   </div>
+  <?php if( $is_submitarea ): // 検索結果 ?>
+  <div class="re-search">
+    <a href="#selected-options">検索条件を変更する</a>
+  </div>
+  <?php endif; ?>
 <?php get_footer(); ?>
