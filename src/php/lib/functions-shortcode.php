@@ -57,188 +57,6 @@ function get_text_from_template($atts) {
   }
 }
 add_shortcode('temp', 'get_text_from_template');
-// test
-function getStationByLine() {
-  
-  include locate_template( 'lines.php' );
-
-  $content = '';
-
-  foreach( $lines_array as $line => $stations ) {
-
-    if( empty($line) || empty($stations) ) return;
-
-    $content .= '<div class="search-line" id="' . $line . '"><h3 class="search-line__title">' . $line . '</h3>';
-    $content .= '<ul class="search-line__list">';
-
-    foreach( $stations as $station ) {
-
-      $count = 0;
-      $args = array(
-        'post_type'        => 'post',
-        'posts_per_page'   => 1,
-        'meta_key' => 'area',
-        'meta_value' => $station,
-      );
-      $my_query = new WP_Query($args);
-
-      if ( $my_query->have_posts() ) {
-        
-        while ( $my_query->have_posts() ) {
-          $my_query->the_post();
-          $post_id = $my_query->posts[$count]->ID;
-
-          $link = get_the_permalink();
-
-          $content .= '<li class="search-line__item"><a href="' . $link . '">' . $station . '</a></li>';
-
-          $count++;
-        }
-        
-      } else {
-        // $content .= '<li class="search-line__item search-line__item--none">' . $station . '</li>';
-      }
-    }
-    $content .= '</ul></div>';
-  }
-  // 上書きされた$postを元に戻す
-  wp_reset_postdata();
-  return $content;
-}
-add_shortcode('test', 'getStationByLine');
-
-
-/**
- * 鉄道会社から駅を取得するショートコード
- */
-function get_station_by_railway_co($atts) {
-  
-  //
-  include locate_template( 'lines.php' );
-
-  $content = '';
-
-  $co_name = $atts['co'];
-  $co_lines = $railway_co[$co_name];
-
-  foreach( $co_lines as $line  ) {
-
-    if( empty( $line ) ) return;
-
-    $content .= '<div class="search-line" id="' . $line . '"><h3 class="search-line__title">' . $line . '</h3>';
-      $content .= '<ul class="search-line__list">';
-
-    $stations_array = $lines_array[$line];
-    /*
-     $co_linesは駅名が入った配列
-     $lineは駅名
-     $stations_arrayは駅の配列
-     */
-    foreach( $stations_array as $station) {
-      if( empty( $station ) ) return;
-      $count = 0;
-      $args = array(
-        'post_type'        => 'post',
-        'posts_per_page'   => 1,
-        'meta_key' => 'area',
-        'meta_value' => $station,
-      );
-      $my_query = new WP_Query($args);
-
-      if ( $my_query->have_posts() ) {
-        
-        while ( $my_query->have_posts() ) {
-          $my_query->the_post();
-          $post_id = $my_query->posts[$count]->ID;
-
-          $link = get_the_permalink();
-
-          $content .= '<li class="search-line__item"><a href="' . $link . '">' . $station . '</a></li>';
-
-          $count++;
-        } 
-      }
-    }
-    $content .= '</ul></div>';
-  }
-  // 上書きされた$postを元に戻す
-  wp_reset_postdata();
-
-  return $content;
-}
-add_shortcode('railway', 'get_station_by_railway_co');
-
-/**
- * 路線から店舗を取得するショートコード
- */
-function get_studio_lines($atts){
-  include locate_template( 'lines.php' );
-
-  $content = '';
-  $meta_query = array();
-  $line = $atts['line'];
-  $stations_array = $lines_array[$line];
-
-  if( empty( $line ) || empty( $stations_array ) ) return;
-
-  foreach( $stations_array as $station ) {
-    $meta_query[] = array(
-      'key' => 'region',
-      'value' => $station,
-      'compare' => '='
-    );
-  }
-  $meta_query['relation'] = 'OR';
-
-  $args = array(
-    'post_type'        => 'studio',
-    'posts_per_page'   => -1,
-    'orderby'          => 'meta_value_num',
-    'order'            => 'ASC',
-    'meta_key' => 'price_per',
-    'meta_query' => $meta_query
-  );
-
-
-  $my_query = new WP_Query($args);
-  $count = 0;
-
-  if ( $my_query->have_posts() ) {
-    while ( $my_query->have_posts() ) {
-      $my_query->the_post();
-
-      $post_id = $my_query->posts[$count]->ID;
-      $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
-      $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
-      $title = $my_query->posts[$count]->post_title;
-      // ベースとなるジムのアフィコードを取得
-      $meta_values = get_post_meta($post_id, 'base_gym', true);
-      $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
-      $post_base_id = $post_base_obj->ID;
-
-      $aficode = get_post_meta( $post_id, 'aficode', true );
-
-      if( empty( $aficode ) ) {
-        $aficode = get_post_meta( $post_base_id, 'aficode', true );
-      }
-
-      $content .= '<div class="gym-content">';
-      $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
-      $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
-      $content .= $content_text;
-      if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
-      $content .= '<p class="gym-content__detail"><a href="' . get_the_permalink() . '">ジム情報を見る</a></p>';
-      $content .= '</div>';
-      $count++;
-    }
-  }
-  // 上書きされた$postを元に戻す
-  wp_reset_postdata();
-
-  return $content;
-}
-add_shortcode('studio_by_line', 'get_studio_lines');
-
 
 /**
  * 地名からジムを取得して表示させるショートコード
@@ -335,72 +153,6 @@ add_shortcode('region', 'getGymByRegion');
 /**
  * 都道府県のジムを取得
  */
-function getGymByPrefecture($atts) {
-
-  $content = '';
-  $key = $atts["place"];
-
-  $tag = get_term_by('name', '重複', 'gym_tag');
-  $tag_id = $tag->term_id;
-
-
-  $args = array(
-    'post_type'        => 'gym',
-    'posts_per_page'   => -1,
-    'orderby'          => 'meta_value_num',
-    'order'            => 'ASC',
-    'tax_query' => array(
-    array(
-      'taxonomy'  => 'gym_tag',
-      'field'     => 'term_id',
-      'terms'     => $tag_id,
-      'operator'  => 'NOT IN'
-      )
-    ),
-    'meta_key' => 'price_per',
-    'meta_query' => array(
-      array(
-        'key' => 'prefecture',
-        'value' => $key,
-        'compare'=>'=',
-      ),
-      'relation' => 'AND'
-    )
-  );
-  $my_query = new WP_Query($args);
-  $count = 0;
-  
-  if ( $my_query->have_posts() ) {
-    while ( $my_query->have_posts() ) {
-      $my_query->the_post();
-      $post_id = $my_query->posts[$count]->ID;
-      $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
-      $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
-      $title = $my_query->posts[$count]->post_title;
-      // ベースとなるジムのアフィコードを取得
-      $aficode = get_post_meta($post_id, 'aficode', true);
-
-      $content .= '<div class="gym-content">';
-      $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
-      $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
-      $content .= $content_text;
-      if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
-      $content .= '</div>';
-      $count++;
-    }
-  }
-
-  // 上書きされた$postを元に戻す
-  wp_reset_postdata();
-  return do_shortcode( $content );
-
-}
-add_shortcode('prefecture', 'getGymByPrefecture');
-
-
-/**
- * 都道府県のジムを取得
- */
 function getGymBytodofuken($atts) {
 
   $content = '';
@@ -463,20 +215,85 @@ function getGymBytodofuken($atts) {
 add_shortcode('todofuken', 'getGymBytodofuken');
 
 /**
- * 都道府県と女性限定・おすすめのジムを取得
+ * 都道府県のジムを取得
+ */
+function getGymByPrefecture($atts) {
+
+  $content = '';
+  $key = $atts["place"];
+
+  $tag = get_term_by('name', '重複', 'gym_tag');
+  $tag_id = $tag->term_id;
+
+
+  $args = array(
+    'post_type'        => 'gym',
+    'posts_per_page'   => -1,
+    'orderby'          => 'meta_value_num',
+    'order'            => 'ASC',
+    'tax_query' => array(
+    array(
+      'taxonomy'  => 'gym_tag',
+      'field'     => 'term_id',
+      'terms'     => $tag_id,
+      'operator'  => 'NOT IN'
+      )
+    ),
+    'meta_key' => 'price_per',
+    'meta_query' => array(
+      array(
+        'key' => 'prefecture',
+        'value' => $key,
+        'compare'=>'=',
+      ),
+      'relation' => 'AND'
+    )
+  );
+  $my_query = new WP_Query($args);
+  $count = 0;
+  
+  if ( $my_query->have_posts() ) {
+    while ( $my_query->have_posts() ) {
+      $my_query->the_post();
+      $post_id = $my_query->posts[$count]->ID;
+      $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
+      $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
+      $title = $my_query->posts[$count]->post_title;
+      // ベースとなるジムのアフィコードを取得
+      $aficode = get_post_meta($post_id, 'aficode', true);
+
+      $content .= '<div class="gym-content">';
+      $content .= '<h2 class="gym-content__title">' .  $title . '</h2>';
+      $content .= '<div class="gym-content__thumb"><img src="' . $post_thumbnail_url . '" alt="' . $title . '"></div>';
+      $content .= do_shortcode( $content_text );
+      if( $aficode ) $content .= '<p class="gym-content__btn">' . $aficode . '</p>';
+      $content .= '</div>';
+      $count++;
+    }
+  }
+
+  // 上書きされた$postを元に戻す
+  wp_reset_postdata();
+  return do_shortcode( $content );
+
+}
+add_shortcode('prefecture', 'getGymByPrefecture');
+
+/**
+ * （新）都道府県と女性限定・おすすめのジムを取得
  */
 function getGymForWoman($atts) {
 
   $content = '';
-  $place = $atts["place"];
+  $todofuken = $atts["todofuken"];
 
   $tag = get_term_by('name', '重複', 'gym_tag');
   $tag_id = $tag->term_id;
 
   $meta_query_args = array(
     array(
-      'key' => 'prefecture',
-      'value' => $place,
+      'key' => 'todofuken',
+      'value' => $todofuken,
       'compare'=>'=',
     ),
     array(
@@ -506,18 +323,10 @@ function getGymForWoman($atts) {
   );
 
   $args = array(
-    'post_type'        => 'gym',
+    'post_type'        => 'todofuken',
     'posts_per_page'   => -1,
     'orderby'          => 'meta_value_num',
     'order'            => 'ASC',
-    'tax_query' => array(
-    array(
-      'taxonomy'  => 'gym_tag',
-      'field'     => 'term_id',
-      'terms'     => $tag_id,
-      'operator'  => 'NOT IN'
-      )
-    ),
     'meta_key' => 'price_per',
     'meta_query' => $meta_query_args
   );
@@ -528,8 +337,14 @@ function getGymForWoman($atts) {
     while ( $my_query->have_posts() ) {
       $my_query->the_post();
       $post_id = $my_query->posts[$count]->ID;
+
+      // ベースのジム情報のidを取得
+      $meta_values = get_post_meta($post_id, 'base_gym', true);
+      $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
+      $post_base_id = $post_base_obj->ID;
+
       $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
-      if ( !$post_thumbnail_url ) $post_thumbnail_url = get_the_post_thumbnail_url( $post_base_id, 'full' );
+      if ( empty( $post_thumbnail_url ) ) $post_thumbnail_url = get_the_post_thumbnail_url( $post_base_id, 'full' );
       
       $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
       $title = $my_query->posts[$count]->post_title;
@@ -683,7 +498,7 @@ function get_gym_available_credit_by_area($atts) {
       $credit_value = get_post_meta($post_base_id, 'credit-card', true);
       $installment_payment_value = get_post_meta($post_base_id, 'installment-payment', true);
 
-      if( !empty( $credit_value ) && !empty( $installment_payment_value ) ) {
+      if( empty( $credit_value ) && empty( $installment_payment_value ) ) {
         $count++;
         continue; //特徴が該当しなければ表示しない
       }
@@ -812,19 +627,32 @@ function get_gym_by_feature2($atts) {
 
   $feature = $atts["feature"];
   $region = $atts["region"];
+  $todofuken = $atts["todofuken"];
 
-  if( !isset($feature) && !isset($region) ) return;
+  if( !empty( $region ) ) {
+    $post_type = 'studio';
+    $key = 'region';
+    $value = $region;
+  } else if ( !empty( $todofuken ) ) {
+    $post_type = 'todofuken';
+    $key = 'todofuken';
+    $value = $todofuken;
+  } else {
+    return;
+  }
+
+  if( empty($feature) ) return;
 
   $args = array(
-    'post_type'        => 'studio',
+    'post_type'        => $post_type,
     'posts_per_page'   => -1,
     'orderby'          => 'meta_value_num',
     'order'            => 'ASC',
     'meta_key' => 'price_per',
     'meta_query' => array(
       array(
-        'key' => 'region',
-        'value' => $region,
+        'key' => $key,
+        'value' => $value,
         'compare'=>'=',
       )
     )
@@ -844,9 +672,9 @@ function get_gym_by_feature2($atts) {
       $post_base_obj = get_page_by_path( $meta_values, OBJECT, 'gym' );
       $post_base_id = $post_base_obj->ID;
 
-      $feature_value = get_post_meta($post_base_id, $feature, true);
+      $feature_value = get_post_meta($post_id, $feature, true);
 
-      if( !empty( $feature_value ) ) {
+      if( empty( $feature_value ) ) {
         $count++;
         continue; //特徴が該当しなければ表示しない
       }

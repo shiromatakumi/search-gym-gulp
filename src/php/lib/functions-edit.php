@@ -10,7 +10,7 @@ if(!function_exists( 'gym_add_quick_tag' )) {
     $page_title = get_the_title();
     $gym_table = '<h4></h4>\n' .
                  '<div class="gym-table-wrap">\n<table class="gym-table" style="min-width:320px">\n' .
-                 '<tr>\n<th>&nbsp;</th><th>コース</th>\n</tr>\n' .
+                 '<tr>\n<th colspan="2">コース</th>\n</tr>\n' .
                  '<tr>\n<td class="gym-table__td-1">コース内容</td>\n<td></td>\n</tr>\n' .
                  '<tr>\n<td class="gym-table__td-1">入会金</td>\n<td></td>\n</tr>\n' .
                  '<tr>\n<td class="gym-table__td-1">コース料金</td>\n<td></td>\n</tr>\n' .
@@ -30,12 +30,12 @@ if(!function_exists( 'gym_add_quick_tag' )) {
         QTags.addButton('qt-posttype-gym','ジム情報のみ表示', '[posttype type="gym"]\n\n[/posttype]');
         QTags.addButton('qt-posttype-studio','店舗情報のみ表示', '[posttype type="studio"]\n\n[/posttype]');
         QTags.addButton('qt-posttype-post','投稿ページのみ表示', '[posttype type="post"]\n\n[/posttype]');
-        QTags.addButton('qt-feature-prefecture','都道府県と特徴', '[feature feature="" prefecture=""]');
         QTags.addButton('qt-region-prefecture','エリアと特徴', '[feature2 feature="" region=""]');
         QTags.addButton('qt-get-temp','テンプレート呼び出し', '[temp slug=""]');
         QTags.addButton('qt-list-title','タイトル付きのリスト', '<ul class="list-title" title="タイトル">\n<li>アイテム</li>\n</ul>');
         QTags.addButton('qt-list-title-studio','タイトル付きの店舗リスト', '<ul class="list-title list-title--studio" title="タイトル">\n<li>アイテム</li>\n</ul>');
-        QTags.addButton('qt-table-studio-info','店舗情報テーブル', '<?php echo $gym_studio_info; ?>');
+        QTags.addButton( 'qt-holyday','定休日追加', '<dt>定休日</dt>\n<dd></dd>' );
+        QTags.addButton( 'qt-parking','駐車場追加', '<dt>駐車場</dt>\n<dd></dd>' );
       </script>
     <?php }
   }
@@ -58,7 +58,7 @@ function update_studio_price() {
   if( !isset( $price_value ) || !isset( $slug_name ) || !isset( $post_id ) ) return;
 
   $args = array(
-    'post_type'        => 'studio',
+    'post_type'        => array( 'studio', 'todofuken' ),
     'posts_per_page'   => -1,
     'meta_query' => array(
       array(
@@ -101,6 +101,7 @@ function update_studio_custom_field() {
   $custom_field_array = array();
 
   $custom_field_array['woman-only']          = @get_post_meta($post_id, 'woman-only', true);
+  $custom_field_array['woman-osusume']       = @get_post_meta($post_id, 'woman-osusume', true);
   $custom_field_array['private-room']        = @get_post_meta($post_id, 'private-room', true);
   $custom_field_array['teaching-meals']      = @get_post_meta($post_id, 'teaching-meals', true);
   $custom_field_array['credit-card']         = @get_post_meta($post_id, 'credit-card', true);
@@ -111,7 +112,7 @@ function update_studio_custom_field() {
   if( empty( $custom_field_array ) || !isset( $slug_name ) || !isset( $post_id ) ) return;
 
   $args = array(
-    'post_type'        => 'studio',
+    'post_type'        => array( 'studio', 'todofuken' ),
     'posts_per_page'   => -1,
     'meta_query' => array(
       array(
@@ -156,7 +157,7 @@ add_action('save_post', 'update_studio_custom_field');
 function update_studio_price_at_studio() {
   global $wpdb, $post, $post_type;
 
-  if ( $post_type !== 'studio' ) return;
+  if ( $post_type !== 'studio' && $post_type !== 'todofuken' ) return;
 
   $base_gym = @get_post_meta( $post->ID, 'base_gym', true );
   if( !isset( $base_gym ) ) return;
@@ -174,7 +175,7 @@ add_action('save_post', 'update_studio_price_at_studio');
 function update_studio_custom_field_at_studio() {
   global $wpdb, $post, $post_type;
 
-  if ( $post_type !== 'studio' ) return;
+  if ( $post_type !== 'studio' && $post_type !== 'todofuken' ) return;
 
   $post_id = $post->ID;
 
@@ -188,6 +189,7 @@ function update_studio_custom_field_at_studio() {
   $custom_field_array = array();
 
   $custom_field_array['woman-only']          = @get_post_meta($base_post_id, 'woman-only', true);
+  $custom_field_array['woman-osusume']       = @get_post_meta($base_post_id, 'woman-osusume', true);
   $custom_field_array['private-room']        = @get_post_meta($base_post_id, 'private-room', true);
   $custom_field_array['teaching-meals']      = @get_post_meta($base_post_id, 'teaching-meals', true);
   $custom_field_array['credit-card']         = @get_post_meta($base_post_id, 'credit-card', true);

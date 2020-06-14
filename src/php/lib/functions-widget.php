@@ -14,15 +14,6 @@ function theme_widget_settings() {
         'after_title'   => '</h3>',
     ) );
     register_sidebar( array(
-        'name' => 'サイドバーおすすめ下',
-        'id' => 'sidebar-bottom',
-        'description' => 'サイドバーのおすすめジムの下に表示されます',
-        'before_widget' => '<div id="%1$s" class="widget widget--sidebar %2$s">',
-        'after_widget'  => '</div>',
-        'before_title'  => '<h3 class="widget__title widget__title--sidebar">',
-        'after_title'   => '</h3>',
-    ) );
-    register_sidebar( array(
         'name' => 'トップページ上部（PC)',
         'id' => 'toppage-upper',
         'description' => 'トップページ上部のウィジェット',

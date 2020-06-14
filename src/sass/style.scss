@@ -605,6 +605,9 @@ table {
     }
   }
 }
+.no-ranking .gym-content .gym-content__title:before {
+  content: none;
+}
 .entry-content h3 {
   padding: .4em .6em;
   background: #f5f5f5;
