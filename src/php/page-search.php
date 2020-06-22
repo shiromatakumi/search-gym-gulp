@@ -169,7 +169,7 @@ if( $is_submitarea ) {
                * ここから
                */
 
-              $post_thumbnail_url = get_the_post_thumbnail_url( $post_id, 'full' );
+              $post_thumbnail_url = get_the_post_thumbnail_url( $post_base_id, 'full' );
               $content_text = apply_filters('the_content',$my_query->posts[$count]->post_content);
               $title = $my_query->posts[$count]->post_title;
               // ベースとなるジムのアフィコードを取得

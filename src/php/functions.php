@@ -169,9 +169,54 @@ function search_exclude_custom_post_type( $query ) {
 }
 add_filter( 'pre_get_posts', 'search_exclude_custom_post_type' );
 
+// カスタム投稿タイプの投稿一覧に表示する
+function add_todofuken_columns_shortcode($columns) {
+  $columns['todofuken'] = '都道府県';
+
+  $sort_number = array(
+    'cb'        => 0,
+    'title'     => 1,
+    'todofuken' => 2,
+    'date'      => 3,
+  );
+  $sort = array();
+  foreach( $columns as $key => $value ){
+    $sort[] = $sort_number{$key};
+  }
+  array_multisort( $sort, $columns );
+
+  return $columns;
+}
+add_filter( 'manage_todofuken_posts_columns', 'add_todofuken_columns_shortcode' );
+
+function add_todofuken_columns_row( $column_name, $post_id ) {
+  if( 'todofuken' == $column_name ) {
+    $todofuken = get_post_meta( $post_id, 'todofuken', true );
+    echo $todofuken;
+  }
+}
+add_action( 'manage_todofuken_posts_custom_column', 'add_todofuken_columns_row', 10, 2 );
+
+function my_add_sort($columns){
+  $columns['todofuken'] = 'jp_order';
+  return $columns;
+}
+function my_add_sort_by_meta( $query ) {
+  if ( $query->is_main_query() && ( $orderby = $query->get( 'orderby' ) ) ) {
+    switch( $orderby ) {
+      case 'jp_order':
+        $query->set( 'meta_key', 'todofuken' );
+        $query->set( 'orderby', 'meta_value' );
+        break;
+    }
+  }
+}
+add_filter( 'manage_edit-todofuken_sortable_columns', 'my_add_sort');
+add_action( 'pre_get_posts', 'my_add_sort_by_meta', 1 );
+
 /** ===================================================
  * コメント欄を口コミ風にカスタマイズ
- ======================================================*/
+ * ======================================================*/
 // 入力項目欄。
 function change_comment_form_kuchikomi($default) {
   $commenter = wp_get_current_commenter();
